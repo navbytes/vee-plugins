@@ -6,7 +6,7 @@ macOS menu-bar script runner.
 Vee ships pointing at the public `xbar-plugins` catalog. That catalog is large,
 old, and mostly unreviewed — plugins run un-sandboxed with your full user
 privileges, and a lot of what is in there has not been touched in years or no
-longer works on current macOS. This store is the opposite trade: **eleven
+longer works on current macOS. This store is the opposite trade: **thirteen
 plugins, all read, all current, all declaring exactly what they touch.**
 
 ## Add it to Vee
@@ -43,6 +43,7 @@ Plugins ship **non-executable on purpose** — you read the source, then you
 | [`battery.5m.sh`](System/battery.5m.sh) | 5m | Charge, time remaining, cycle count, condition, and capacity health as a donut. One `system_profiler` call, timeout-guarded. Says "no battery" cleanly on a desktop Mac. **Also a desktop widget.** |
 | [`disk-space.10m.sh`](System/disk-space.10m.sh) | 10m | Free space per volume, with `/` and `/System/Volumes/Data` collapsed into one honest boot-volume row. The "biggest folders in ~" scan is timeout-guarded and skips itself rather than hanging your menu. |
 | [`audio.10s.sh`](System/audio.10s.sh) | 10s | Output device, plus a **live volume slider and mute toggle in the menu row** — drag it and the volume moves. Switch output device from a submenu. |
+| [`caffeine.1m.sh`](System/caffeine.1m.sh) | 1m | Keep the Mac awake indefinitely or for a timed session, with a countdown in the menu bar. Two modes: hold the display awake too, or let it sleep while the system stays up. Finds `caffeinate` processes it didn't start and lets you adopt or stop each one individually. |
 
 ### Developer
 
@@ -65,6 +66,7 @@ Plugins ship **non-executable on purpose** — you read the source, then you
 | --- | --- | --- |
 | [`pomodoro.sh`](Productivity/pomodoro.sh) | streams | A focus timer that **streams** — the countdown ticks once a second instead of waiting on a refresh interval. Focus/break phases, daily tally, one-click controls, and a notification when a phase ends. |
 | [`worldclock.1m.py`](Productivity/worldclock.1m.py) | 1m | Your team's timezones with a green/yellow/grey "can I message them right now" indicator, a meeting-overlap planner, and click-to-copy ISO timestamps. |
+| [`clipboard.swift`](Productivity/clipboard.swift) | streams | Clipboard history with **full-text search over every entry** (⌘⌃V from anywhere), pins, and ⌥ to pin/unpin in place. Skips anything a password manager marks concealed, and honours macOS 15.4's pasteboard-privacy gate instead of nagging you. **Needs the Xcode Command Line Tools.** |
 
 Most of these have settings — open the plugin's Settings in Vee's Plugin Manager.
 `GIT_ROOTS`, `UPTIME_TARGETS`, `TIMEZONES`, and `PORT_RANGES` are the ones worth
@@ -73,13 +75,19 @@ setting first.
 ## The rules every plugin here follows
 
 1. **Nothing beyond what macOS ships.** bash, `/usr/bin/*`, and `python3`.
-   Optional tools (`git`, `gh`) are detected, never assumed.
+   Optional tools (`git`, `gh`) are detected, never assumed. One deliberate
+   exception: `clipboard.swift` needs the Xcode Command Line Tools, because
+   reading `NSPasteboard`'s concealed-type markers is what stops it recording
+   your passwords, and no shell tool exposes them.
 2. **Honest `<vee.*>` declarations.** Every domain, binary, path, and secret the
    plugin touches is declared. Declaring more than you use is fine; declaring
    less is a bug that gets a plugin rejected.
 3. **No surprise network calls.** Only `github.5m.py` (api.github.com),
    `network.30s.py` (api.ipify.org, **opt-in**), and `uptime.5m.py` (targets
-   *you* configure) go outbound at all. There is no telemetry anywhere.
+   *you* configure) go outbound at all. The clipboard plugin reads everything
+   you copy and sends it **nowhere** — it writes to a `0700` directory under
+   `~/Library/Caches` and that is the whole of it. There is no telemetry
+   anywhere.
 4. **Graceful degradation.** No token, no network, no dependency, no data — each
    gets one clear row. A traceback in your menu bar is a bug.
 5. **Bounded.** Every `curl` has `--max-time`, every scan has a cap, every

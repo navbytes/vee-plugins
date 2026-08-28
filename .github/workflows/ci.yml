@@ -55,10 +55,24 @@ jobs:
           for f in */*.py; do
             head -1 "$f" | grep -q 'python3' || { echo "::error file=$f::.py with a non-python shebang"; fail=1; }
           done
+          for f in */*.swift; do
+            head -1 "$f" | grep -q 'swift' || { echo "::error file=$f::.swift with a non-swift shebang"; fail=1; }
+          done
+          exit $fail
+
+      # Swift plugins can only be typechecked on macOS with the Xcode CLT, which
+      # this runner does not have. Gate the cheap structural things here and
+      # leave `swiftc -typecheck` to the authoring loop.
+      - name: Swift plugins declare their toolchain dependency
+        run: |
+          fail=0
+          for f in */*.swift; do
+            grep -q 'Command Line Tools' "$f" || { echo "::error file=$f::must state the Xcode CLT dependency"; fail=1; }
+          done
           exit $fail
 
       - name: No plugin ships executable (users chmod after reading)
         run: |
-          if find . -path ./.git -prune -o \( -name '*.sh' -o -name '*.py' \) -not -path './scripts/*' -perm -u+x -print | grep .; then
+          if find . -path ./.git -prune -o \( -name '*.sh' -o -name '*.py' -o -name '*.swift' \) -not -path './scripts/*' -perm -u+x -print | grep .; then
             echo "::error::plugins must ship non-executable"; exit 1
           fi

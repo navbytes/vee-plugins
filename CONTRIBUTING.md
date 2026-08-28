@@ -13,7 +13,12 @@ A plugin is accepted when all of these hold:
    menu bar, not a format demo.
 2. **No dependencies beyond what macOS ships.** bash/zsh, `/usr/bin/*`, and
    `python3`. Wrapping an optional tool (`git`, `docker`, `gh`) is fine — it must
-   detect the tool's absence and say so in a row.
+   detect the tool's absence and say so in a row. There is exactly one exception
+   in the store, `clipboard.swift`, which needs the Xcode Command Line Tools:
+   reading `NSPasteboard`'s change counter and its concealed-type markers is
+   what keeps a clipboard manager from recording your password manager's
+   output, and no shell tool exposes them. A new plugin clears this bar only by
+   showing the dependency buys something a shipped tool genuinely cannot do.
 3. **It degrades gracefully.** No token, no network, no dependency, no data:
    each one gets a clear, actionable row. A traceback in the menu bar is a bug.
 4. **Its `<vee.*>` declarations are honest.** Every domain, binary, path, and
@@ -22,7 +27,16 @@ A plugin is accepted when all of these hold:
    Every `curl` carries `--max-time`.
 6. **Destructive rows are `"searchable": false`** so a typed query plus Return
    can never land on one.
-7. **State lives in `$SWIFTBAR_PLUGIN_CACHE_PATH`.** Every run is a fresh process.
+7. **State lives in a per-plugin directory, and which one depends on what
+   losing it costs.** Every run is a fresh process, so anything that must
+   survive goes to disk. Use `$SWIFTBAR_PLUGIN_CACHE_PATH` for state you can
+   simply regenerate — a sparkline history, a cached API response. Use
+   `$SWIFTBAR_PLUGIN_DATA_PATH` when losing it breaks something: `caffeine`
+   records the PID of a process it spawned, and a cache eviction there orphans
+   a real `caffeinate` the plugin can then never stop. Fall back down the chain
+   (`DATA` → `CACHE` → `${TMPDIR:-/tmp}`) so the plugin still works if a path is
+   unset. `$TMPDIR` alone is not state: macOS prunes it, and it differs per
+   login session.
 8. **It is readable.** These files are read before they are run — a header
    comment saying what it does, what it touches, and what it needs, then terse
    inline comments.

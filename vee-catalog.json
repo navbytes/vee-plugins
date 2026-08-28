@@ -32,6 +32,19 @@
       "surface": "both"
     },
     {
+      "path": "System/caffeine.1m.sh",
+      "title": "Caffeine",
+      "category": "System",
+      "summary": "Keep your Mac awake \u2014 indefinitely or for a timed session \u2014 from the menu bar.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "8118606b8a23925dd0b6bf131032be80e448c8fcdc63cc1f05bb924bb3f4de6f",
+      "deprecated": false,
+      "tags": [
+        "system"
+      ]
+    },
+    {
       "path": "System/disk-space.10m.sh",
       "title": "Disk Space",
       "category": "System",
@@ -129,6 +142,21 @@
         "widget"
       ],
       "surface": "both"
+    },
+    {
+      "path": "Productivity/clipboard.swift",
+      "title": "Clipboard",
+      "category": "Productivity",
+      "summary": "Clipboard history \u2014 full-text fuzzy search, pins, and a global hotkey. Return copies a match back to the clipboard; \u2325 turns each row into Pin/Unpin.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "e322f5cec6a926d8e7e18a12d8e3ac3135d43654f97e46f2e898babf5d77a78c",
+      "deprecated": false,
+      "tags": [
+        "productivity",
+        "searchable",
+        "streaming"
+      ]
     },
     {
       "path": "Productivity/pomodoro.sh",

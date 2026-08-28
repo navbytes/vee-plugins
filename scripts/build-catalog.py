@@ -30,27 +30,30 @@ STORE_NAME = "Vee Plugins by navbytes"
 HOMEPAGE = "https://github.com/navbytes/vee-plugins"
 MIN_MACOS = "26.0"
 
-TAG_RE = re.compile(r"<(xbar|swiftbar|vee)\.([a-z.]+)>(.*?)</\1\.\2>", re.S)
+# Vee's HeaderParser matches <(xbar|swiftbar|vee).KEY> and switches on KEY alone —
+# the namespace is decorative, so <vee.title> and <xbar.title> are the same tag.
+# Key by KEY here too, or a plugin using the <vee.*> spelling reads as untitled.
+TAG_RE = re.compile(r"<(?:xbar|swiftbar|vee)\.([a-zA-Z.]+)>(.*?)</(?:xbar|swiftbar|vee)\.\1>", re.S)
 PLUGIN_RE = re.compile(r"^[\w.-]+\.(sh|py|ts|js|rb|pl|swift)$")
 
 
 def read_tags(text: str) -> dict[str, str]:
-    """Every `<ns.name>value</ns.name>` header in a source file, keyed `ns.name`."""
-    return {f"{ns}.{name}": val.strip() for ns, name, val in TAG_RE.findall(text)}
+    """Every `<ns.name>value</ns.name>` header in a source file, keyed by bare name."""
+    return {name.lower(): val.strip() for name, val in TAG_RE.findall(text)}
 
 
 def derive_tags(tags: dict[str, str], category: str) -> list[str]:
     """Search keywords: the category, plus what the trust headers reveal."""
     out = [category.lower()]
-    if tags.get("vee.network"):
+    if tags.get("network"):
         out.append("network")
-    if tags.get("vee.secrets"):
+    if tags.get("secrets"):
         out.append("secrets")
-    if tags.get("vee.surface") in ("both", "widget"):
+    if tags.get("surface") in ("both", "widget"):
         out.append("widget")
-    if tags.get("vee.filter") == "true":
+    if tags.get("filter") == "true":
         out.append("searchable")
-    if tags.get("swiftbar.type") == "streamable":
+    if tags.get("type") == "streamable":
         out.append("streaming")
     return list(dict.fromkeys(out))  # dedupe, keep order
 
@@ -63,17 +66,17 @@ def entry(path: Path) -> dict:
 
     e = {
         "path": rel,
-        "title": tags.get("xbar.title") or path.name,
+        "title": tags.get("title") or path.name,
         "category": category,
-        "summary": tags.get("xbar.desc", ""),
-        "author": tags.get("xbar.author", "Naveen Kumar"),
+        "summary": tags.get("desc", ""),
+        "author": tags.get("author", "Naveen Kumar"),
         "min_macos": MIN_MACOS,
         "sha256": hashlib.sha256(source).hexdigest(),
         "deprecated": False,
         "tags": derive_tags(tags, category),
     }
     # `surface` lets Discover flag a widget-only plugin without downloading it.
-    if surface := tags.get("vee.surface"):
+    if surface := tags.get("surface"):
         e["surface"] = surface
     return e
 
