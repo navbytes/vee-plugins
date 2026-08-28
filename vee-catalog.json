@@ -51,7 +51,7 @@
       "summary": "Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "8f9ab716a7cd69df17f836d26d20a7443fbed350e0da6474d4db6e275d3a699c",
+      "sha256": "5e9c2f38d11d10b3ee0a776795456bb1e9fe770e73db1199825e8244ed393041",
       "deprecated": false,
       "tags": [
         "system"
@@ -121,7 +121,7 @@
       "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "44fa4afc7c0959bd006e8662bc80cd5889d9167bad91b12830a1ff53a4cb84cd",
+      "sha256": "4bebe32e7bce2448262e3cf49faf0ec2de992aac5a70f5d3281d3b02fc9ec2f1",
       "deprecated": false,
       "tags": [
         "network"

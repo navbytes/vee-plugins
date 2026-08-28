@@ -29,7 +29,7 @@
 #     session.
 #
 # <vee.title>Network</vee.title>
-# <vee.version>1.0</vee.version>
+# <vee.version>1.1</vee.version>
 # <vee.author>Naveen Kumar</vee.author>
 # <vee.author.github>navbytes</vee.author.github>
 # <vee.desc>Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.</vee.desc>
@@ -118,7 +118,19 @@ def get_gateway():
 
 
 def get_local_ipv4(iface):
-    return run(["/usr/sbin/ipconfig", "getifaddr", iface]).strip()
+    """`ipconfig getifaddr` answers only for DHCP-configured interfaces, so it
+    returns nothing for a VPN tunnel (`utun*`) or any other point-to-point
+    link — which is exactly the interface that holds the default route while a
+    VPN is up, i.e. the one this plugin reports. Fall back to `ifconfig`, the
+    same source `get_local_ipv6` already reads."""
+    addr = run(["/usr/sbin/ipconfig", "getifaddr", iface]).strip()
+    if addr:
+        return addr
+    for line in run(["/sbin/ifconfig", iface]).splitlines():
+        line = line.strip()
+        if line.startswith("inet "):
+            return line.split()[1]
+    return ""
 
 
 def get_local_ipv6(iface):
