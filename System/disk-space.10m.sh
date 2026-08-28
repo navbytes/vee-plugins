@@ -13,16 +13,16 @@
 # ---------------------------------------------------------------------------
 # Metadata
 # ---------------------------------------------------------------------------
-# <xbar.title>Disk Space</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.</xbar.desc>
-# <xbar.dependencies>bash,python3,df,du</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Disk Space</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.</vee.desc>
+# <vee.dependencies>bash,python3,df,du</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>string(DISK_INCLUDE=): Extra mount-point prefixes to always list, comma-separated (e.g. /System/Volumes/Update). Leave blank for the sensible default (skips internal APFS system slices, Simulator disk images, and Recovery).</xbar.var>
-# <xbar.var>number(DISK_WARN=85): Percent used at which a volume's row turns red.</xbar.var>
+# <vee.var>string(DISK_INCLUDE=): Extra mount-point prefixes to always list, comma-separated (e.g. /System/Volumes/Update). Leave blank for the sensible default (skips internal APFS system slices, Simulator disk images, and Recovery).</vee.var>
+# <vee.var>number(DISK_WARN=85): Percent used at which a volume's row turns red.</vee.var>
 #
 # Trust declarations (advisory, never enforced):
 # <vee.capabilities>exec,filesystem</vee.capabilities>

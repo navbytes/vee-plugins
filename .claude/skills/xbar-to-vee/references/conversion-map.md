@@ -20,7 +20,7 @@
 | Unicode block-bar progress (`████░░░░`) | `"progress": 0.5` — a real capsule bar |
 | ASCII sparkline (`▁▂▃▅▇`) | `"sparkline": [1,2,3,5,7]` |
 | Hand-drawn percentage breakdown | `"chart": {"kind":"donut","values":[…],"labels":[…]}` |
-| A "Settings" row opening a config file | `<xbar.var>` typed preferences — Vee generates the form |
+| A "Settings" row opening a config file | `<vee.var>` typed preferences — Vee generates the form |
 
 Sizing accessories: `accessoryWidth` / `accessoryHeight` (JSON),
 `accessoryw=` / `accessoryh=` (text). The old `progressw=`, `sparklinew=`,
@@ -28,7 +28,19 @@ Sizing accessories: `accessoryWidth` / `accessoryHeight` (JSON),
 
 ## Metadata
 
-`<xbar.*>` and `<swiftbar.*>` headers carry over **unchanged** — Vee reads both.
+**Rename every header to the `<vee.*>` namespace** — `<xbar.title>` becomes
+`<vee.title>`, `<swiftbar.type>` becomes `<vee.type>`, and so on. Vee's
+`HeaderParser` matches `<(xbar|swiftbar|vee).KEY>` and switches on `KEY` alone,
+so this changes nothing functionally; it is what marks a plugin as converted
+rather than merely copied. Note the cost: a `<vee.*>`-only plugin no longer runs
+on xbar or SwiftBar, which read only their own namespaces. If the user wants to
+keep it portable to those tools, say so and leave the original spellings.
+
+The **environment variables do not follow this rename.**
+`SWIFTBAR_PLUGIN_CACHE_PATH` and `SWIFTBAR_PLUGIN_DATA_PATH` have no `VEE_*`
+equivalent in the runtime and must keep their names. `VEE_PLUGIN_PATH`,
+`VEE_PLUGIN_ID`, `VEE_TARGET`, and `VEE_CONTROL_VALUE` are Vee-native.
+
 Add on conversion:
 
 | Add | Why |
@@ -57,7 +69,7 @@ Add on conversion:
 
 | Old | Vee |
 |---|---|
-| `$BitBar*` / `$XBAR*` | still injected for compatibility; `$VEE_*` is native |
+| `$BitBar*` / `$XBAR*` | still injected for compatibility; `$VEE_*` is native where it exists |
 | assumed state between runs | `$SWIFTBAR_PLUGIN_CACHE_PATH` (fall back to `${TMPDIR:-/tmp}`) |
 | hardcoded plugin path | `$VEE_PLUGIN_PATH` |
 | n/a | `$VEE_TARGET` — `menu` or `widget`; branch to emit a widget card |

@@ -136,7 +136,7 @@ python3 scripts/build-catalog.py           # regenerate
 python3 scripts/build-catalog.py --check   # CI: fail if stale
 ```
 
-Metadata comes from each plugin's own `<xbar.*>` / `<vee.*>` headers, so there is
+Metadata comes from each plugin's own `<vee.*>` headers, so there is
 exactly one place to edit: the plugin. CI additionally checks shell and Python
 syntax, shellcheck, that every manifest path resolves, and that nothing ships
 with an executable bit.

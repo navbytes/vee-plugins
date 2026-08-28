@@ -8,7 +8,7 @@ install can be verified before it touches disk.
     scripts/build-catalog.py            # rewrite vee-catalog.json
     scripts/build-catalog.py --check    # exit 1 if it is out of date (CI)
 
-Metadata comes from each plugin's own `<xbar.*>` / `<vee.*>` headers, so there
+Metadata comes from each plugin's own `<vee.*>` headers, so there
 is exactly one place to edit: the plugin.
 """
 from __future__ import annotations
@@ -32,7 +32,8 @@ MIN_MACOS = "26.0"
 
 # Vee's HeaderParser matches <(xbar|swiftbar|vee).KEY> and switches on KEY alone —
 # the namespace is decorative, so <vee.title> and <xbar.title> are the same tag.
-# Key by KEY here too, or a plugin using the <vee.*> spelling reads as untitled.
+# Key by KEY here too: this store writes <vee.*> throughout, and an imported
+# plugin still carries <xbar.*>/<swiftbar.*> until it is converted.
 TAG_RE = re.compile(r"<(?:xbar|swiftbar|vee)\.([a-zA-Z.]+)>(.*?)</(?:xbar|swiftbar|vee)\.\1>", re.S)
 PLUGIN_RE = re.compile(r"^[\w.-]+\.(sh|py|ts|js|rb|pl|swift)$")
 

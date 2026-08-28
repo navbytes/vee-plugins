@@ -71,6 +71,17 @@ jobs:
           done
           exit $fail
 
+      # House convention: this is a Vee store, so headers use the <vee.*>
+      # spelling. Vee reads all three namespaces identically, so this is style,
+      # not function — but it is the line between a converted plugin and a
+      # copied one, and it only stays true if something checks.
+      - name: Headers use the <vee.*> namespace
+        run: |
+          if grep -rlE '<(/?)(xbar|swiftbar)\.' System Developer Network Monitoring Productivity; then
+            echo "::error::plugin headers must use <vee.*>, not <xbar.*>/<swiftbar.*>"; exit 1
+          fi
+          echo "all plugin headers use <vee.*>"
+
       - name: No plugin ships executable (users chmod after reading)
         run: |
           if find . -path ./.git -prune -o \( -name '*.sh' -o -name '*.py' -o -name '*.swift' \) -not -path './scripts/*' -perm -u+x -print | grep .; then

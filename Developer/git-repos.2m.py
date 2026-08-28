@@ -12,16 +12,16 @@
 # This is the searchable-filter-panel showcase: <vee.filter>true</vee.filter>
 # plus a global hotkey turn the dropdown into a type-to-jump repo picker.
 #
-# <xbar.title>Git Repos</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.</xbar.desc>
-# <xbar.dependencies>python3,git</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Git Repos</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.</vee.desc>
+# <vee.dependencies>python3,git</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>string(GIT_ROOTS=~/repos): Colon-separated directories to scan for repos (2 levels deep).</xbar.var>
-# <xbar.var>string(GIT_EDITOR_CMD=): Command to open a repo in your editor, e.g. "code" or "subl". Leave blank to hide the menu item.</xbar.var>
+# <vee.var>string(GIT_ROOTS=~/repos): Colon-separated directories to scan for repos (2 levels deep).</vee.var>
+# <vee.var>string(GIT_EDITOR_CMD=): Command to open a repo in your editor, e.g. "code" or "subl". Leave blank to hide the menu item.</vee.var>
 #
 # <vee.filter>true</vee.filter>
 # <vee.shortcut>cmd+shift+g</vee.shortcut>

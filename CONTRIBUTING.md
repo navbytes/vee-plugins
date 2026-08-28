@@ -41,7 +41,21 @@ A plugin is accepted when all of these hold:
    comment saying what it does, what it touches, and what it needs, then terse
    inline comments.
 9. **It ships non-executable** (`0644`). Users `chmod +x` after reading.
-10. **`vee lint` is clean.**
+10. **Every header uses the `<vee.*>` namespace.** `<vee.title>`, `<vee.desc>`,
+    `<vee.var>`, `<vee.type>`, not the `<xbar.*>` / `<swiftbar.*>` spellings.
+    Vee's `HeaderParser` matches `<(xbar|swiftbar|vee).KEY>` and switches on
+    `KEY` alone, so all three are read identically — this is a house convention,
+    not a functional requirement. It costs portability to xbar and SwiftBar,
+    which only read their own namespaces; that is a deliberate trade, since this
+    is a Vee store and much of what these plugins do has no xbar equivalent
+    anyway.
+
+    The **environment variables are a separate matter** and keep their
+    `SWIFTBAR_` names: `SWIFTBAR_PLUGIN_CACHE_PATH` and
+    `SWIFTBAR_PLUGIN_DATA_PATH` have no `VEE_*` equivalent in the runtime.
+    `VEE_PLUGIN_PATH`, `VEE_PLUGIN_ID`, `VEE_TARGET`, and `VEE_CONTROL_VALUE`
+    are Vee-native — use those where they exist.
+11. **`vee lint` is clean.**
 
 New plugins should use Vee's [JSON output format](https://vee.navbytes.io/guide/json-output/)
 (`{"vee":1,…}`) — it removes the entire class of `|`-quoting and escaping bugs.
@@ -57,7 +71,7 @@ python3 scripts/build-catalog.py   # regenerate vee-catalog.json
 ```
 
 `vee-catalog.json` is **generated** — never hand-edit it. Metadata comes from
-each plugin's own `<xbar.*>` / `<vee.*>` headers, so there is one place to edit:
+each plugin's own `<vee.*>` headers, so there is one place to edit:
 the plugin. CI fails if the manifest is stale.
 
 ## Adding a plugin
@@ -68,7 +82,7 @@ the plugin. CI fails if the manifest is stale.
    `scripts/build-catalog.py`.
 2. Name it `name.INTERVAL.ext` — `disk.10m.sh`, `ports.30s.sh`. No interval means
    run-on-demand only.
-3. Fill in the metadata headers. `<xbar.desc>` is required — CI rejects a plugin
+3. Fill in the metadata headers. `<vee.desc>` is required — CI rejects a plugin
    without one, because it is what Discover shows on the card.
 4. `python3 scripts/build-catalog.py`, then commit the plugin and the manifest
    together.

@@ -8,16 +8,16 @@
 # URL, or kill the process — the kill row is deliberately unsearchable so a
 # typed query + Return can never land on it.
 #
-# <xbar.title>Dev Ports</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Processes listening on your dev ports, with open/copy/kill actions.</xbar.desc>
-# <xbar.dependencies>python3,lsof</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Dev Ports</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Processes listening on your dev ports, with open/copy/kill actions.</vee.desc>
+# <vee.dependencies>python3,lsof</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>string(PORT_RANGES=3000-3010,4000,5173,8000-8100,8080,9000): Comma-separated ports/ranges to watch, e.g. "3000-3010,8080".</xbar.var>
-# <xbar.var>boolean(SHOW_ALL=false): Also list every other listening port, not just PORT_RANGES.</xbar.var>
+# <vee.var>string(PORT_RANGES=3000-3010,4000,5173,8000-8100,8080,9000): Comma-separated ports/ranges to watch, e.g. "3000-3010,8080".</vee.var>
+# <vee.var>boolean(SHOW_ALL=false): Also list every other listening port, not just PORT_RANGES.</vee.var>
 #
 # Trust declarations (advisory, never enforced):
 # <vee.capabilities>exec</vee.capabilities>

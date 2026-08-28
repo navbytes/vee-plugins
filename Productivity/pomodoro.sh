@@ -3,7 +3,7 @@
 # pomodoro.sh — a focus timer that lives in the menu bar.
 #
 # This is Vee's STREAMING plugin showcase: no filename interval, marked
-# <swiftbar.type>streamable</swiftbar.type>, and it stays running forever,
+# <vee.type>streamable</vee.type>, and it stays running forever,
 # pushing a full menu render between `~~~` separators once a second instead
 # of being re-run on a timer. It uses the text protocol (not JSON) because a
 # streaming loop reads far more clearly as plain `echo` lines, and takes
@@ -21,20 +21,20 @@
 # ---------------------------------------------------------------------------
 # Metadata
 # ---------------------------------------------------------------------------
-# <xbar.title>Pomodoro</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>A streaming menu-bar focus timer — focus/break phases, a daily tally, and one-click controls.</xbar.desc>
-# <xbar.dependencies>bash</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Pomodoro</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>A streaming menu-bar focus timer — focus/break phases, a daily tally, and one-click controls.</vee.desc>
+# <vee.dependencies>bash</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>number(FOCUS_MINUTES=25): Length of a focus session, in minutes.</xbar.var>
-# <xbar.var>number(BREAK_MINUTES=5): Length of a short break, in minutes.</xbar.var>
-# <xbar.var>number(LONG_BREAK_MINUTES=15): Length of the long break every 4th completed focus session.</xbar.var>
-# <xbar.var>boolean(NOTIFY=true): Post a notification when a phase ends.</xbar.var>
+# <vee.var>number(FOCUS_MINUTES=25): Length of a focus session, in minutes.</vee.var>
+# <vee.var>number(BREAK_MINUTES=5): Length of a short break, in minutes.</vee.var>
+# <vee.var>number(LONG_BREAK_MINUTES=15): Length of the long break every 4th completed focus session.</vee.var>
+# <vee.var>boolean(NOTIFY=true): Post a notification when a phase ends.</vee.var>
 #
-# <swiftbar.type>streamable</swiftbar.type>
+# <vee.type>streamable</vee.type>
 #
 # Trust declarations (advisory, never enforced):
 # <vee.capabilities>notifications</vee.capabilities>

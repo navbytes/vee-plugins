@@ -35,13 +35,13 @@
 # ---------------------------------------------------------------------------
 # Metadata
 # ---------------------------------------------------------------------------
-# <xbar.title>Audio</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Output device, volume, and mute, with a live slider and toggle right in the menu.</xbar.desc>
-# <xbar.dependencies>bash,python3,osascript,system_profiler</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Audio</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Output device, volume, and mute, with a live slider and toggle right in the menu.</vee.desc>
+# <vee.dependencies>bash,python3,osascript,system_profiler</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
 # Trust declarations (advisory, never enforced): both control rows can
 # change system volume/mute state when clicked, so `exec` is declared

@@ -26,7 +26,7 @@ otherwise fetch:
 - `https://vee.navbytes.io/guide/plugin-authoring.md` — the format
 - `https://vee.navbytes.io/guide/json-output.md` — the JSON format (**target this**)
 - `https://vee.navbytes.io/guide/trust-model.md` — `<vee.*>` declarations
-- `https://vee.navbytes.io/guide/preferences.md` — `<xbar.var>` settings
+- `https://vee.navbytes.io/guide/preferences.md` — typed `<vee.var>` settings
 - `https://vee.navbytes.io/llms-full.txt` — everything, one file
 
 `references/audit-checklist.md` in this skill is the audit rubric.
@@ -41,7 +41,7 @@ that is where a payload hides. Then classify:
 | Verdict | Meaning | What you do |
 |---|---|---|
 | **BLOCK** | Hostile or indistinguishable from hostile: exfiltrates data, steals credentials, downloads and executes remote code, destroys data, hides its behaviour. | Report the finding with the exact lines. **Do not convert.** Do not produce a "cleaned" version — offer to write a fresh plugin that achieves the stated purpose instead. |
-| **WARN** | Legitimate but risky: broad network access, reads secrets, runs `sudo`, writes outside its own cache, uses a deprecated/unpinned dependency. | Report each finding, then convert — with the risk declared honestly in `<vee.*>` headers and, where the behaviour is optional, moved behind an opt-in `<xbar.var>` that defaults to off. |
+| **WARN** | Legitimate but risky: broad network access, reads secrets, runs `sudo`, writes outside its own cache, uses a deprecated/unpinned dependency. | Report each finding, then convert — with the risk declared honestly in `<vee.*>` headers and, where the behaviour is optional, moved behind an opt-in `<vee.var>` that defaults to off. |
 | **CLEAN** | Reads local state, hits a documented API for its stated purpose, no surprises. | Report "no findings", convert. |
 
 **Always report every finding, including on a CLEAN verdict** (say so explicitly)
@@ -70,27 +70,38 @@ Rules for the converted plugin:
 
 1. **Preserve behaviour, not bugs.** Same information, same links, same actions.
    Silently dropping a feature is a worse outcome than porting it with a warning.
-2. **Honest `<vee.*>` headers**, derived from what the code *does*, not what the
-   original author claimed: `<vee.network>` (every host), `<vee.secrets>`,
+2. **Rename all metadata to the `<vee.*>` namespace** (`<xbar.title>` →
+   `<vee.title>`, `<swiftbar.type>` → `<vee.type>`). Functionally identical —
+   Vee switches on the key, not the namespace — but it is what distinguishes a
+   converted plugin from a copied one. It does cost xbar/SwiftBar portability;
+   if the user needs that, leave the originals and say so. Environment variables
+   are exempt: `SWIFTBAR_PLUGIN_CACHE_PATH`/`DATA_PATH` have no `VEE_*` twin.
+3. **Honest `<vee.*>` trust headers**, derived from what the code *does*, not what
+   the original author claimed: `<vee.network>` (every host), `<vee.secrets>`,
    `<vee.exec>` (every binary), `<vee.filesystem.read>` / `.write>`.
    Declaring more than it uses is fine; declaring less is a bug.
-3. **Hardcoded credentials become `<xbar.var>`** named so Vee treats them as
+4. **Hardcoded credentials become `<vee.var>`** named so Vee treats them as
    secrets (`*_TOKEN`, `*_APIKEY`, `*_PASSWORD` → Keychain-stored, masked). Never
    carry a literal key across into the new file, even the original author's own.
-4. **Graceful degradation.** Missing dependency, missing token, no network, empty
+5. **Graceful degradation.** Missing dependency, missing token, no network, empty
    result — each gets one clear, actionable row. Never a traceback in the menu bar.
-5. **Bound everything.** Add `--max-time` to every `curl`, cap loops and result
+6. **Bound everything.** Add `--max-time` to every `curl`, cap loops and result
    counts, and keep the whole run under ~3 seconds.
-6. **Destructive rows get `"searchable": false`** so a typed query plus Return
+7. **Destructive rows get `"searchable": false`** so a typed query plus Return
    can never trigger them.
-7. **State goes in `$SWIFTBAR_PLUGIN_CACHE_PATH`.** Every run is a fresh process;
-   old plugins that assumed otherwise need this rewritten.
-8. **Modernize dead system calls.** Removed or neutered on current macOS:
+8. **State goes in a per-plugin directory.** `$SWIFTBAR_PLUGIN_CACHE_PATH` for
+   anything you can regenerate; `$SWIFTBAR_PLUGIN_DATA_PATH` when losing it
+   breaks something (a PID you spawned, say). `$TMPDIR` is not state — macOS
+   prunes it. Every run is a fresh process; old plugins that assumed otherwise
+   need this rewritten.
+9. **Modernize dead system calls.** Removed or neutered on current macOS:
    `airport -I`, `/usr/bin/python` (2.x), `networksetup` subcommands that now
    require authorization. See `references/conversion-map.md`.
-9. **Keep the filename interval** (`name.INTERVAL.ext`) and raise it if the
-   original polled a remote API aggressively.
-10. **Ship it non-executable** and tell the user to read it before `chmod +x`.
+10. **Keep the filename interval** (`name.INTERVAL.ext`) and raise it if the
+    original polled a remote API aggressively. A plugin whose display counts
+    down or ticks needs an interval at all — without one it renders once and
+    goes stale.
+11. **Ship it non-executable** and tell the user to read it before `chmod +x`.
 
 ## Step 3 — Verify
 

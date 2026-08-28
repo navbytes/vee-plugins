@@ -12,17 +12,17 @@
 # ---------------------------------------------------------------------------
 # Metadata
 # ---------------------------------------------------------------------------
-# <xbar.title>System Vitals</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>CPU load, memory pressure, swap, and uptime, with a live history sparkline and a desktop widget.</xbar.desc>
-# <xbar.dependencies>bash,python3,top,ps,memory_pressure,sysctl,uptime</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>System Vitals</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>CPU load, memory pressure, swap, and uptime, with a live history sparkline and a desktop widget.</vee.desc>
+# <vee.dependencies>bash,python3,top,ps,memory_pressure,sysctl,uptime</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
 # Warn/critical thresholds (percent CPU used), user-editable in Settings.
-# <xbar.var>number(VITALS_WARN=70): CPU% at which the title turns yellow.</xbar.var>
-# <xbar.var>number(VITALS_CRIT=90): CPU% at which the title turns red.</xbar.var>
+# <vee.var>number(VITALS_WARN=70): CPU% at which the title turns yellow.</vee.var>
+# <vee.var>number(VITALS_CRIT=90): CPU% at which the title turns red.</vee.var>
 #
 # Trust declarations (advisory, never enforced):
 # <vee.capabilities>exec,filesystem</vee.capabilities>

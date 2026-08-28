@@ -28,17 +28,17 @@
 #   - No Wi-Fi power toggle -- too easy to lock yourself out of a remote
 #     session.
 #
-# <xbar.title>Network</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.</xbar.desc>
-# <xbar.dependencies>python3</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Network</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.</vee.desc>
+# <vee.dependencies>python3</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>boolean(SHOW_PUBLIC_IP=false): Look up your public IP via api.ipify.org. Makes a network call, cached 10 minutes.</xbar.var>
-# <xbar.var>boolean(PING_ENABLED=true): Track latency to PING_HOST with a sparkline (one ping per refresh).</xbar.var>
-# <xbar.var>string(PING_HOST=1.1.1.1): Host pinged for the latency sparkline.</xbar.var>
+# <vee.var>boolean(SHOW_PUBLIC_IP=false): Look up your public IP via api.ipify.org. Makes a network call, cached 10 minutes.</vee.var>
+# <vee.var>boolean(PING_ENABLED=true): Track latency to PING_HOST with a sparkline (one ping per refresh).</vee.var>
+# <vee.var>string(PING_HOST=1.1.1.1): Host pinged for the latency sparkline.</vee.var>
 #
 # Trust declarations (advisory, never enforced -- see docs/trust-model.md):
 # <vee.capabilities>network,filesystem,exec,clipboard</vee.capabilities>

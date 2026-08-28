@@ -17,16 +17,16 @@
 # ---------------------------------------------------------------------------
 # Metadata
 # ---------------------------------------------------------------------------
-# <xbar.title>World Clock</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.</xbar.desc>
-# <xbar.dependencies>python3</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>World Clock</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.</vee.desc>
+# <vee.dependencies>python3</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>string(TIMEZONES=Asia/Kolkata=Home,America/Los_Angeles=SF,Europe/London=London,Asia/Tokyo=Tokyo): Comma-separated Zone=Label pairs, e.g. "Asia/Tokyo=Tokyo,Europe/Paris=Paris".</xbar.var>
-# <xbar.var>string(PRIMARY_ZONE=): IANA zone shown next to local time in the title. Empty shows local time only.</xbar.var>
+# <vee.var>string(TIMEZONES=Asia/Kolkata=Home,America/Los_Angeles=SF,Europe/London=London,Asia/Tokyo=Tokyo): Comma-separated Zone=Label pairs, e.g. "Asia/Tokyo=Tokyo,Europe/Paris=Paris".</vee.var>
+# <vee.var>string(PRIMARY_ZONE=): IANA zone shown next to local time in the title. Empty shows local time only.</vee.var>
 #
 # Trust declarations (advisory, never enforced):
 # <vee.capabilities>clipboard</vee.capabilities>

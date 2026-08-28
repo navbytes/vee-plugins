@@ -46,7 +46,7 @@ subdomain built from local data (`$(whoami).attacker.tld`).
 ## 3. Credentials and secrets
 
 - Hardcoded API keys, tokens, passwords, private keys → **WARN**, and they must
-  be replaced by `<xbar.var>` on conversion, never carried across.
+  be replaced by `<vee.var>` on conversion, never carried across.
 - Reads of `~/.ssh/id_*`, `~/.aws/credentials`, `~/.netrc`, `~/.docker/config.json`,
   `~/.kube/config`, `.env`, `*.pem`, `*.p12` → **WARN** if used locally for the
   plugin's stated purpose, **BLOCK** if any of it is transmitted.

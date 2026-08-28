@@ -23,15 +23,15 @@
 #   - No default targets are shipped -- an empty UPTIME_TARGETS prints a
 #     friendly row with an example rather than pinging anyone else's server.
 #
-# <xbar.title>Uptime</xbar.title>
-# <xbar.version>1.0</xbar.version>
-# <xbar.author>Naveen Kumar</xbar.author>
-# <xbar.author.github>navbytes</xbar.author.github>
-# <xbar.desc>Parallel HTTP health checks for your own endpoints, in the menu bar and as a widget board.</xbar.desc>
-# <xbar.dependencies>python3,curl</xbar.dependencies>
-# <xbar.abouturl>https://github.com/navbytes/vee-plugins</xbar.abouturl>
+# <vee.title>Uptime</vee.title>
+# <vee.version>1.0</vee.version>
+# <vee.author>Naveen Kumar</vee.author>
+# <vee.author.github>navbytes</vee.author.github>
+# <vee.desc>Parallel HTTP health checks for your own endpoints, in the menu bar and as a widget board.</vee.desc>
+# <vee.dependencies>python3,curl</vee.dependencies>
+# <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 #
-# <xbar.var>string(UPTIME_TARGETS=): Comma-separated Label=https://url checks, e.g. API=https://api.example.com/health,Docs=https://docs.example.com. Capped at 12.</xbar.var>
+# <vee.var>string(UPTIME_TARGETS=): Comma-separated Label=https://url checks, e.g. API=https://api.example.com/health,Docs=https://docs.example.com. Capped at 12.</vee.var>
 #
 # This plugin renders both in the menu and as a widget board:
 # <vee.surface>both</vee.surface>
