@@ -121,7 +121,7 @@
       "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "4bebe32e7bce2448262e3cf49faf0ec2de992aac5a70f5d3281d3b02fc9ec2f1",
+      "sha256": "1b548532cc70726c51664bb95d43c7aed008a00edc5648cf2d87cf1a9789bf0f",
       "deprecated": false,
       "tags": [
         "network"

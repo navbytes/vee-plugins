@@ -164,6 +164,18 @@ def get_dns_servers():
 
 
 def get_ssid_fallback(wifi_device):
+    """The SSID without paying for `system_profiler`.
+
+    `ipconfig getsummary` returns in ~0ms and still reports the SSID on
+    current macOS, where `networksetup -getairportnetwork` answers "You are
+    not associated with an AirPort network." for an interface that is plainly
+    associated — which read, in this menu, as "Not connected to Wi-Fi" while
+    the machine was on Wi-Fi. `networksetup` is kept as a second chance for
+    older systems, where it does work."""
+    for line in run(["/usr/sbin/ipconfig", "getsummary", wifi_device]).splitlines():
+        m = re.match(r"\s*SSID\s*:\s*(.+?)\s*$", line)
+        if m:
+            return m.group(1)
     out = run(["/usr/sbin/networksetup", "-getairportnetwork", wifi_device])
     m = re.search(r"Current Wi-Fi Network: (.+)", out)
     return m.group(1).strip() if m else ""
@@ -175,7 +187,12 @@ def get_ssid_fallback(wifi_device):
 # ---------------------------------------------------------------------------
 
 def get_wifi_details(wifi_device):
-    out = run(["/usr/sbin/system_profiler", "SPAirPortDataType", "-json"], timeout=4)
+    # 8s, not 4s: a cold `system_profiler SPAirPortDataType` measured 6.1-6.7s
+    # here and only 0.7s once warm, so a 4s guard threw away the signal data on
+    # exactly the runs that had to fetch it. The SSID no longer depends on this
+    # call (see `get_ssid_fallback`), so a timeout now costs the signal rows
+    # rather than the whole Wi-Fi section.
+    out = run(["/usr/sbin/system_profiler", "SPAirPortDataType", "-json"], timeout=8)
     if not out:
         return None
     try:
@@ -369,6 +386,15 @@ if default_if:
     items.item(text, **kwargs)
     text, kwargs = copy_row(f"IPv6 ({default_if})", get_local_ipv6(default_if))
     items.item(text, **kwargs)
+    # With a VPN up the default route is the tunnel, so the rows above describe
+    # `utun*` and the address the machine actually holds on the LAN is nowhere
+    # in the menu. Show it too when the Wi-Fi/Ethernet interface underneath is
+    # a different one that still has an address of its own.
+    if wifi_device and wifi_device != default_if:
+        underlying = get_local_ipv4(wifi_device)
+        if underlying:
+            text, kwargs = copy_row(f"IPv4 ({hw_map.get(wifi_device, wifi_device)})", underlying)
+            items.item(text, **kwargs)
     text, kwargs = copy_row("Gateway", get_gateway())
     items.item(text, **kwargs)
     dns_servers = get_dns_servers()
