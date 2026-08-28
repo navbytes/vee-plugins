@@ -1,0 +1,161 @@
+{
+  "vee_catalog": 1,
+  "name": "Vee Plugins by navbytes",
+  "homepage": "https://github.com/navbytes/vee-plugins",
+  "plugins": [
+    {
+      "path": "System/audio.10s.sh",
+      "title": "Audio",
+      "category": "System",
+      "summary": "Output device, volume, and mute, with a live slider and toggle right in the menu.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "095f133deac884fa81b675df3cfa181b5ae0fe57d15e847cce8c372c266e9ffa",
+      "deprecated": false,
+      "tags": [
+        "system"
+      ]
+    },
+    {
+      "path": "System/battery.5m.sh",
+      "title": "Battery",
+      "category": "System",
+      "summary": "Battery charge, time remaining, health, and adapter details, with a desktop widget gauge.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "c5d5c4e9db1d984c40fac030df821ed36ca15988e4200b3b70bbae32e6a27a4c",
+      "deprecated": false,
+      "tags": [
+        "system",
+        "widget"
+      ],
+      "surface": "both"
+    },
+    {
+      "path": "System/disk-space.10m.sh",
+      "title": "Disk Space",
+      "category": "System",
+      "summary": "Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "a9f714e7c5fdbd87b89fa4551c9ce5dbbf6a620bbcf25f4d6cec58a82bcc8c89",
+      "deprecated": false,
+      "tags": [
+        "system"
+      ]
+    },
+    {
+      "path": "System/system-vitals.10s.sh",
+      "title": "System Vitals",
+      "category": "System",
+      "summary": "CPU load, memory pressure, swap, and uptime, with a live history sparkline and a desktop widget.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "45b90222970703fd0c41e295b74552c131a9631bc436329faaf230a9795e3b9d",
+      "deprecated": false,
+      "tags": [
+        "system",
+        "widget"
+      ],
+      "surface": "both"
+    },
+    {
+      "path": "Developer/dev-ports.30s.py",
+      "title": "Dev Ports",
+      "category": "Developer",
+      "summary": "Processes listening on your dev ports, with open/copy/kill actions.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "9717ac78b918e5f9f4af6f4524d1b39a3ff705c94beea9d9a00779adfb80d677",
+      "deprecated": false,
+      "tags": [
+        "developer"
+      ]
+    },
+    {
+      "path": "Developer/git-repos.2m.py",
+      "title": "Git Repos",
+      "category": "Developer",
+      "summary": "Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "44c342b8ac174ad6323c890b3d790e4db984dfa38d8a3203e812c638b31403c7",
+      "deprecated": false,
+      "tags": [
+        "developer",
+        "searchable"
+      ]
+    },
+    {
+      "path": "Developer/github.5m.py",
+      "title": "GitHub PRs",
+      "category": "Developer",
+      "summary": "PRs waiting on your review, your own open PRs, and unread notifications.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "0763bebfd4c622f50151c14e443fbb7930490225442fe730443e8b49f1579e2c",
+      "deprecated": false,
+      "tags": [
+        "developer",
+        "network",
+        "secrets"
+      ]
+    },
+    {
+      "path": "Network/network.30s.py",
+      "title": "Network",
+      "category": "Network",
+      "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "19f5c7fc66d272cdd22e193e2696fa2735c0b0ee764ac4983996e18967e8084e",
+      "deprecated": false,
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "path": "Monitoring/uptime.5m.py",
+      "title": "Uptime",
+      "category": "Monitoring",
+      "summary": "Parallel HTTP health checks for your own endpoints, in the menu bar and as a widget board.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "0d9ba4fee4e30bd991fa8f50139e772024c5dda699600e83e54087975f77553d",
+      "deprecated": false,
+      "tags": [
+        "monitoring",
+        "network",
+        "widget"
+      ],
+      "surface": "both"
+    },
+    {
+      "path": "Productivity/pomodoro.sh",
+      "title": "Pomodoro",
+      "category": "Productivity",
+      "summary": "A streaming menu-bar focus timer \u2014 focus/break phases, a daily tally, and one-click controls.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "bfe00ac12161f013844cb4d31786e9b65141f83103f813b87e7ae0cebdbe6f45",
+      "deprecated": false,
+      "tags": [
+        "productivity",
+        "streaming"
+      ]
+    },
+    {
+      "path": "Productivity/worldclock.1m.py",
+      "title": "World Clock",
+      "category": "Productivity",
+      "summary": "Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "11882fffc329059ceec733040f44c78e1ff7c525a3582a6c0fa98156d36c3aec",
+      "deprecated": false,
+      "tags": [
+        "productivity"
+      ]
+    }
+  ]
+}

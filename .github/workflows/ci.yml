@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Manifest is in sync with the repo
+        run: python3 scripts/build-catalog.py --check
+
+      - name: Manifest entries resolve and are complete
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          m = json.load(open("vee-catalog.json"))
+          assert m["vee_catalog"] == 1, "unsupported manifest version"
+          seen = set()
+          for p in m["plugins"]:
+              path = pathlib.Path(p["path"])
+              assert path.is_file(), f"missing: {path}"
+              assert p["path"] not in seen, f"duplicate: {path}"
+              assert p["summary"], f"no <xbar.desc>: {path}"
+              assert p["title"], f"no <xbar.title>: {path}"
+              seen.add(p["path"])
+          print(f"{len(seen)} plugins OK")
+          PY
+
+      - name: Shell syntax
+        run: for f in */*.sh; do bash -n "$f"; done
+
+      - name: Python syntax
+        run: python3 -m py_compile */*.py scripts/*.py
+
+      - uses: ludeeus/action-shellcheck@master
+        with:
+          severity: warning
+          format: gcc
+        env:
+          # SC2016: single-quoted $VAR is intentional inside JSON/AppleScript payloads.
+          # SC2086: word splitting is intentional where we build argv lists.
+          SHELLCHECK_OPTS: -e SC2016 -e SC2086
+
+      - name: Shebang matches extension
+        run: |
+          fail=0
+          for f in */*.sh; do
+            head -1 "$f" | grep -qE '(bash|sh|zsh)$' || { echo "::error file=$f::.sh with a non-shell shebang"; fail=1; }
+          done
+          for f in */*.py; do
+            head -1 "$f" | grep -q 'python3' || { echo "::error file=$f::.py with a non-python shebang"; fail=1; }
+          done
+          exit $fail
+
+      - name: No plugin ships executable (users chmod after reading)
+        run: |
+          if find . -path ./.git -prune -o \( -name '*.sh' -o -name '*.py' \) -not -path './scripts/*' -perm -u+x -print | grep .; then
+            echo "::error::plugins must ship non-executable"; exit 1
+          fi
