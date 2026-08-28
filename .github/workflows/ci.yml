@@ -85,8 +85,15 @@ jobs:
       - name: Shebang matches extension
         run: |
           fail=0
+          # vee.py / vee.ts are the vendored SDK — libraries, not plugins, so
+          # they carry no shebang. Vee's own discovery skips them by name too.
           for f in */*.py; do
+            case "$(basename "$f")" in vee.py) continue;; esac
             head -1 "$f" | grep -q 'python3' || { echo "::error file=$f::.py with a non-python shebang"; fail=1; }
+          done
+          for f in */*.ts; do
+            case "$(basename "$f")" in vee.ts) continue;; esac
+            head -1 "$f" | grep -q 'node' || { echo "::error file=$f::.ts with a non-node shebang"; fail=1; }
           done
           for f in */*.swift; do
             head -1 "$f" | grep -q 'swift' || { echo "::error file=$f::.swift with a non-swift shebang"; fail=1; }
