@@ -10,7 +10,7 @@
       "summary": "Output device, volume, and mute, with a live slider and toggle right in the menu.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "8e92a62f26eda7d87f4f6a8912f43ad5bae310cf9235a43a089056306840b2d4",
+      "sha256": "d807aa7ad6078721eaa1710a7dd5dc8bb01eb8fd134d2cc544ba5935a7217e53",
       "deprecated": false,
       "tags": [
         "system"
@@ -23,7 +23,7 @@
       "summary": "Battery charge, time remaining, health, and adapter details, with a desktop widget gauge.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "901d837dc520d74ca498baeb6e38ef8dfedc323b6d2cbe8329656f31fb0902d1",
+      "sha256": "4a6d6c95ed0dd4a69adf222723b9a9e6432c6e1fd21ec22b90cc280092eb3d85",
       "deprecated": false,
       "tags": [
         "system",
@@ -38,7 +38,7 @@
       "summary": "Keep your Mac awake \u2014 indefinitely or for a timed session \u2014 from the menu bar.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "4f39a07b2172faeeb958e66a065adac4c3be27136dfea331aa2cceb067a57145",
+      "sha256": "416eac08397638879987782a42c53109e8d407088771b0b212eed0b66ca7e826",
       "deprecated": false,
       "tags": [
         "system"
@@ -51,7 +51,7 @@
       "summary": "Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "8f9ab716a7cd69df17f836d26d20a7443fbed350e0da6474d4db6e275d3a699c",
+      "sha256": "cafe43811007a9c83e53a1b789f7907fcc7b2bc9210ac0d2f8e92a396c8f2c41",
       "deprecated": false,
       "tags": [
         "system"
@@ -64,7 +64,7 @@
       "summary": "CPU load, memory pressure, swap, and uptime, with a live history sparkline and a desktop widget.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "8a42f075c0f0884e7242480f3fa10256644d125489aa103b2432ee95a548c4eb",
+      "sha256": "c672404effe57745f2f233ce453d6eb2cb0a3e840c700e8fb7adf8631b6ede27",
       "deprecated": false,
       "tags": [
         "system",
@@ -79,7 +79,7 @@
       "summary": "Processes listening on your dev ports, with open/copy/kill actions.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "cbe8fc62a03580ce3bbe4387c70e771643a545f6e62bbee9c102b8de4d23049f",
+      "sha256": "8c6ca26efcb9feea5da131a3cade8dbfc0d4aa1131db01646b928639f14b7eb6",
       "deprecated": false,
       "tags": [
         "developer"
@@ -92,7 +92,7 @@
       "summary": "Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "b1d87a9130be88b1b7fb6596cc3f86e2859299e85050a2e4030697bbaff5d96a",
+      "sha256": "ac5291b646c84a0513003c27c9e2f182c8070d56cad56216a859e0e55cfd8daa",
       "deprecated": false,
       "tags": [
         "developer",
@@ -106,7 +106,7 @@
       "summary": "PRs waiting on your review, your own open PRs, and unread notifications.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "9ce3a198f4ed897ba65eb3f55e7f03447981c20e78b4338e0c726be9efc5b79c",
+      "sha256": "5696ba83322d12a9c9b5d6a176c5ef25d55abc29bab539b9c08ad5db5ec5bb47",
       "deprecated": false,
       "tags": [
         "developer",
@@ -121,7 +121,7 @@
       "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "44fa4afc7c0959bd006e8662bc80cd5889d9167bad91b12830a1ff53a4cb84cd",
+      "sha256": "168bece635c085932bcf2d5b9bd09d74a31c348b6aecde9da4dba6a4845cb255",
       "deprecated": false,
       "tags": [
         "network"
@@ -151,7 +151,7 @@
       "summary": "Parallel HTTP health checks for your own endpoints, in the menu bar and as a widget board.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "78e3d0a40faa652c3cace4dcfee961a1c7f37a92e219b60991bd6889362b4a43",
+      "sha256": "c453ca0d2790e31ba9fbd531902eef5ed8dbeb850e4fc03b781962225a41cdfd",
       "deprecated": false,
       "tags": [
         "monitoring",
@@ -167,7 +167,7 @@
       "summary": "Clipboard history \u2014 full-text fuzzy search, pins, and a global hotkey. Return copies a match back to the clipboard; \u2325 turns each row into Pin/Unpin.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "e322f5cec6a926d8e7e18a12d8e3ac3135d43654f97e46f2e898babf5d77a78c",
+      "sha256": "b8f26ff54f4ff196d4159a1ad632841b17ad109593d63c2fab0ef3a998794d97",
       "deprecated": false,
       "tags": [
         "productivity",
@@ -182,7 +182,7 @@
       "summary": "A streaming menu-bar focus timer \u2014 focus/break phases, a daily tally, and one-click controls.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "8bb043fe76212736374597dda1a66a9da1057e1030fc210c392db035b9cac9a1",
+      "sha256": "25295d44edf9930d7d863431966a172701efe3ec0008de50c217fc935882d96f",
       "deprecated": false,
       "tags": [
         "productivity",
@@ -196,7 +196,7 @@
       "summary": "Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "afa4de93446da82401b032075fca8c7167934b3d81221c122d32817019078e62",
+      "sha256": "c652a10353267e746bc19a291f70e9d73e9aafd1e2a33ef37231965559749041",
       "deprecated": false,
       "tags": [
         "productivity"

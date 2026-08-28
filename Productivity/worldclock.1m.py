@@ -24,6 +24,7 @@
 # <vee.desc>Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.</vee.desc>
 # <vee.dependencies>python3</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/worldclock.png</vee.image>
 #
 # <vee.var>string(TIMEZONES=Asia/Kolkata=Home,America/Los_Angeles=SF,Europe/London=London,Asia/Tokyo=Tokyo): Comma-separated Zone=Label pairs, e.g. "Asia/Tokyo=Tokyo,Europe/Paris=Paris".</vee.var>
 # <vee.var>string(PRIMARY_ZONE=): IANA zone shown next to local time in the title. Empty shows local time only.</vee.var>

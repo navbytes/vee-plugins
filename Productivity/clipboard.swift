@@ -7,6 +7,7 @@
 // <vee.desc>Clipboard history — full-text fuzzy search, pins, and a global hotkey. Return copies a match back to the clipboard; ⌥ turns each row into Pin/Unpin.</vee.desc>
 // <vee.dependencies>Xcode Command Line Tools (provides /usr/bin/swift; macOS does not ship it)</vee.dependencies>
 // <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+// <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/clipboard.png</vee.image>
 //
 // <vee.type>streamable</vee.type>
 //

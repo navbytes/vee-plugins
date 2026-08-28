@@ -21,6 +21,7 @@
 # <vee.desc>Battery charge, time remaining, health, and adapter details, with a desktop widget gauge.</vee.desc>
 # <vee.dependencies>python3,pmset,system_profiler</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/battery.png</vee.image>
 #
 # Trust declarations (advisory, never enforced):
 # <vee.capabilities>exec</vee.capabilities>

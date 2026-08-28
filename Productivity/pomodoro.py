@@ -28,6 +28,7 @@
 # <vee.desc>A streaming menu-bar focus timer — focus/break phases, a daily tally, and one-click controls.</vee.desc>
 # <vee.dependencies>python3</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/pomodoro.png</vee.image>
 #
 # <vee.var>number(FOCUS_MINUTES=25): Length of a focus session, in minutes.</vee.var>
 # <vee.var>number(BREAK_MINUTES=5): Length of a short break, in minutes.</vee.var>

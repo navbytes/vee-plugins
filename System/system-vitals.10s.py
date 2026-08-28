@@ -24,6 +24,7 @@
 # <vee.desc>CPU load, memory pressure, swap, and uptime, with a live history sparkline and a desktop widget.</vee.desc>
 # <vee.dependencies>python3,top,ps,memory_pressure,sysctl,uptime</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/system-vitals.png</vee.image>
 #
 # Warn/critical thresholds (percent CPU used), user-editable in Settings.
 # <vee.var>number(VITALS_WARN=70): CPU% at which the title turns yellow.</vee.var>
