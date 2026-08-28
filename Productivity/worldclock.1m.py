@@ -33,11 +33,12 @@
 # <vee.exec>pbcopy,sh</vee.exec>
 # <vee.filesystem.read>/usr/share/zoneinfo</vee.filesystem.read>
 
-import json
 import os
 import sys
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
+
+from vee import JSONMenu
 
 ZONEINFO_DIR = "/usr/share/zoneinfo"
 TIMEZONES = os.environ.get(
@@ -45,11 +46,6 @@ TIMEZONES = os.environ.get(
     "Asia/Kolkata=Home,America/Los_Angeles=SF,Europe/London=London,Asia/Tokyo=Tokyo",
 )
 PRIMARY_ZONE = os.environ.get("PRIMARY_ZONE", "").strip()
-
-
-def emit(obj):
-    sys.stdout.write(json.dumps(obj))
-    sys.exit(0)
 
 
 def zone_exists(name):
@@ -140,56 +136,47 @@ def main():
             primary_time = now.astimezone(ZoneInfo(PRIMARY_ZONE)).strftime("%H:%M")
             title_text = f"{title_text} · {primary_label} {primary_time}"
 
+    menu = JSONMenu()
+    menu.title(title_text, sfimage="clock")
+
     if not valid and not invalid:
-        emit(
-            {
-                "vee": 1,
-                "title": [{"text": title_text, "sfimage": "clock"}],
-                "items": [{"text": "No timezones configured (TIMEZONES is empty)", "color": "gray"}],
-            }
-        )
+        menu.dropdown.item("No timezones configured (TIMEZONES is empty)", color="gray")
+        menu.print()
+        sys.exit(0)
 
     # --- Team section --------------------------------------------------------
-    items = [{"header": True, "text": "Team"}]
+    items = menu.dropdown
+    items.item("Team", header=True)
     for zone, label in valid:
         zdt = now.astimezone(ZoneInfo(zone))
         color, sfimage = working_hours_status(zdt.hour)
-        row = {
-            "text": f"{label} — {zdt.strftime('%H:%M')} ({day_offset_str(zdt.date(), local_date)}, {utc_offset_str(zdt)})",
-            "color": color,
-            "sfimage": sfimage,
-            "tooltip": zone,
-        }
-        row.update(copy_action(zdt))
-        items.append(row)
+        kwargs = {"color": color, "sfimage": sfimage, "tooltip": zone}
+        kwargs.update(copy_action(zdt))
+        items.item(
+            f"{label} — {zdt.strftime('%H:%M')} ({day_offset_str(zdt.date(), local_date)}, {utc_offset_str(zdt)})",
+            **kwargs,
+        )
     for entry in invalid:
-        items.append({"text": f"Invalid timezone: {entry}", "color": "gray", "disabled": True})
+        items.item(f"Invalid timezone: {entry}", color="gray", disabled=True)
 
     # --- Meeting planner: next 12 hours per zone, aligned to local hours ---
-    items.append({"separator": True})
-    items.append({"header": True, "text": "Meeting planner"})
+    items.separator()
+    items.item("Meeting planner", header=True)
     hour_start = now.replace(minute=0, second=0, microsecond=0)
     for zone, label in valid:
-        submenu = []
+        submenu = items.submenu(f"Next 12h in {label}", sfimage="calendar")
         for i in range(12):
             t = hour_start + timedelta(hours=i)
             local_t = t.astimezone()
             zone_t = t.astimezone(ZoneInfo(zone))
             suffix = "" if zone_t.date() == local_t.date() else f" ({day_offset_str(zone_t.date(), local_t.date())})"
-            row = {
-                "text": f"{local_t.strftime('%H:%M')} local → {zone_t.strftime('%H:%M')} {label}{suffix}",
-            }
-            row.update(copy_action(zone_t))
-            submenu.append(row)
-        items.append({"text": f"Next 12h in {label}", "sfimage": "calendar", "submenu": submenu})
+            submenu.item(
+                f"{local_t.strftime('%H:%M')} local → {zone_t.strftime('%H:%M')} {label}{suffix}",
+                **copy_action(zone_t),
+            )
 
-    emit(
-        {
-            "vee": 1,
-            "title": [{"text": title_text, "sfimage": "clock"}],
-            "items": items,
-        }
-    )
+    menu.print()
+    sys.exit(0)
 
 
 if __name__ == "__main__":

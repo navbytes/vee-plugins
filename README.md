@@ -6,7 +6,7 @@ macOS menu-bar script runner.
 Vee ships pointing at the public `xbar-plugins` catalog. That catalog is large,
 old, and mostly unreviewed — plugins run un-sandboxed with your full user
 privileges, and a lot of what is in there has not been touched in years or no
-longer works on current macOS. This store is the opposite trade: **thirteen
+longer works on current macOS. This store is the opposite trade: **fourteen
 plugins, all read, all current, all declaring exactly what they touch.**
 
 ## Add it to Vee
@@ -24,14 +24,37 @@ trust gate. Everything here is public — no token needed.
 Or grab one file directly:
 
 ```sh
-curl -o ~/Library/Application\ Support/Vee/plugins/system-vitals.10s.sh \
-  https://raw.githubusercontent.com/navbytes/vee-plugins/main/System/system-vitals.10s.sh
+cd ~/Library/Application\ Support/Vee/plugins
+vee sdk py --out .          # once per machine — see below
+curl -O https://raw.githubusercontent.com/navbytes/vee-plugins/main/System/system-vitals.10s.py
 # read it, then:
-chmod +x ~/Library/Application\ Support/Vee/plugins/system-vitals.10s.sh
+chmod +x system-vitals.10s.py
 ```
 
 Plugins ship **non-executable on purpose** — you read the source, then you
 `chmod +x`. That is the deal this store is built around.
+
+### One-time setup: the SDK
+
+Every plugin here builds its menu with Vee's own SDK rather than formatting text
+by hand, so the SDK has to sit beside them:
+
+```sh
+vee sdk py --out ~/Library/Application\ Support/Vee/plugins   # all but one plugin
+vee sdk ts --out ~/Library/Application\ Support/Vee/plugins   # only for litellm-cost
+```
+
+**Do this once per machine.** Vee's installer writes exactly one file, so
+installing from Discover does not bring the SDK with it — without it a plugin
+fails with an import error. Vee's plugin discovery skips `vee.py` / `vee.ts` by
+name, so they sit in the folder without being run as plugins.
+
+Why bother: the SDK owns quoting and escaping. Given a path containing a space
+it emits `param1="/Users/you/Library/Application Support/Vee/plugins/pomodoro.py"`
+correctly quoted, and given `a|b` it emits `a\|b` — the exact corruption that
+silently broke rows here before. It also rejects unknown options at runtime, which
+caught a `submenu` being passed as a parameter and silently dropping an entire
+subtree.
 
 ## What's in it
 
@@ -39,11 +62,11 @@ Plugins ship **non-executable on purpose** — you read the source, then you
 
 | Plugin | Every | What it does |
 | --- | --- | --- |
-| [`system-vitals.10s.sh`](System/system-vitals.10s.sh) | 10s | CPU, memory pressure, swap, uptime. Keeps a rolling 40-sample history on disk so the sparkline is real, not decorative. Top-5 CPU and memory processes each get their own bar. **Also a desktop widget.** |
-| [`battery.5m.sh`](System/battery.5m.sh) | 5m | Charge, time remaining, cycle count, condition, and capacity health as a donut. One `system_profiler` call, timeout-guarded. Says "no battery" cleanly on a desktop Mac. **Also a desktop widget.** |
-| [`disk-space.10m.sh`](System/disk-space.10m.sh) | 10m | Free space per volume, with `/` and `/System/Volumes/Data` collapsed into one honest boot-volume row. The "biggest folders in ~" scan is timeout-guarded and skips itself rather than hanging your menu. |
-| [`audio.10s.sh`](System/audio.10s.sh) | 10s | Output device, plus a **live volume slider and mute toggle in the menu row** — drag it and the volume moves. Switch output device from a submenu. |
-| [`caffeine.1m.sh`](System/caffeine.1m.sh) | 1m | Keep the Mac awake indefinitely or for a timed session, with a countdown in the menu bar. Two modes: hold the display awake too, or let it sleep while the system stays up. Finds `caffeinate` processes it didn't start and lets you adopt or stop each one individually. |
+| [`system-vitals.10s.py`](System/system-vitals.10s.py) | 10s | CPU, memory pressure, swap, uptime. Keeps a rolling 40-sample history on disk so the sparkline is real, not decorative. Top-5 CPU and memory processes each get their own bar. **Also a desktop widget.** |
+| [`battery.5m.py`](System/battery.5m.py) | 5m | Charge, time remaining, cycle count, condition, and capacity health as a donut. One `system_profiler` call, timeout-guarded. Says "no battery" cleanly on a desktop Mac. **Also a desktop widget.** |
+| [`disk-space.10m.py`](System/disk-space.10m.py) | 10m | Free space per volume, with `/` and `/System/Volumes/Data` collapsed into one honest boot-volume row. The "biggest folders in ~" scan is timeout-guarded and skips itself rather than hanging your menu. |
+| [`audio.10s.py`](System/audio.10s.py) | 10s | Output device, plus a **live volume slider and mute toggle in the menu row** — drag it and the volume moves. Switch output device from a submenu. |
+| [`caffeine.1m.py`](System/caffeine.1m.py) | 1m | Keep the Mac awake indefinitely or for a timed session, with a countdown in the menu bar. Two modes: hold the display awake too, or let it sleep while the system stays up. Finds `caffeinate` processes it didn't start and lets you adopt or stop each one individually. |
 
 ### Developer
 
@@ -59,12 +82,13 @@ Plugins ship **non-executable on purpose** — you read the source, then you
 | --- | --- | --- |
 | [`network.30s.py`](Network/network.30s.py) | 30s | Active interface, Wi-Fi signal as a real quality bar, addresses / gateway / DNS (click any to copy), and a latency sparkline. Public-IP lookup is **opt-in and off by default**. |
 | [`uptime.5m.py`](Monitoring/uptime.5m.py) | 5m | Health checks for **your own** endpoints, run in parallel. Per-target response-time sparklines. Ships with no targets — it will never contact anything you did not configure. **Also a desktop widget board.** |
+| [`litellm-cost.90s.ts`](Monitoring/litellm-cost.90s.ts) | 90s | Daily LLM spend against your budget from a [LiteLLM](https://litellm.ai) proxy: a capacity bar broken down by model, per-model spend and error counts, a 7-day trend, and cache savings. Caches the last good response and says so when the proxy is unreachable. **Also a desktop widget gauge. Needs Node 24+.** |
 
 ### Productivity
 
 | Plugin | Every | What it does |
 | --- | --- | --- |
-| [`pomodoro.sh`](Productivity/pomodoro.sh) | streams | A focus timer that **streams** — the countdown ticks once a second instead of waiting on a refresh interval. Focus/break phases, daily tally, one-click controls, and a notification when a phase ends. |
+| [`pomodoro.py`](Productivity/pomodoro.py) | streams | A focus timer that **streams** — the countdown ticks once a second instead of waiting on a refresh interval. Focus/break phases, daily tally, one-click controls, and a notification when a phase ends. |
 | [`worldclock.1m.py`](Productivity/worldclock.1m.py) | 1m | Your team's timezones with a green/yellow/grey "can I message them right now" indicator, a meeting-overlap planner, and click-to-copy ISO timestamps. |
 | [`clipboard.swift`](Productivity/clipboard.swift) | streams | Clipboard history with **full-text search over every entry** (⌘⌃V from anywhere), pins, and ⌥ to pin/unpin in place. Skips anything a password manager marks concealed, and honours macOS 15.4's pasteboard-privacy gate instead of nagging you. **Needs the Xcode Command Line Tools.** |
 
@@ -74,11 +98,12 @@ setting first.
 
 ## The rules every plugin here follows
 
-1. **Nothing beyond what macOS ships.** bash, `/usr/bin/*`, and `python3`.
-   Optional tools (`git`, `gh`) are detected, never assumed. One deliberate
-   exception: `clipboard.swift` needs the Xcode Command Line Tools, because
-   reading `NSPasteboard`'s concealed-type markers is what stops it recording
-   your passwords, and no shell tool exposes them.
+1. **Nothing beyond what macOS ships**, plus the vendored SDK. `python3` and
+   `/usr/bin/*`; optional tools (`git`, `gh`, `docker`) are detected, never
+   assumed. Two deliberate exceptions, both because the dependency buys
+   something no shipped tool can: `clipboard.swift` needs the Xcode Command Line
+   Tools, since reading `NSPasteboard`'s concealed-type markers is what stops it
+   recording your passwords; and `litellm-cost.90s.ts` needs Node 24+.
 2. **Honest `<vee.*>` declarations.** Every domain, binary, path, and secret the
    plugin touches is declared. Declaring more than you use is fine; declaring
    less is a bug that gets a plugin rejected.

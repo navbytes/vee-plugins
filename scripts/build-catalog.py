@@ -36,6 +36,10 @@ MIN_MACOS = "26.0"
 # plugin still carries <xbar.*>/<swiftbar.*> until it is converted.
 TAG_RE = re.compile(r"<(?:xbar|swiftbar|vee)\.([a-zA-Z.]+)>(.*?)</(?:xbar|swiftbar|vee)\.\1>", re.S)
 PLUGIN_RE = re.compile(r"^[\w.-]+\.(sh|py|ts|js|rb|pl|swift)$")
+# Vee's PluginDiscovery skips these by name (vendoredSDKFilenames) so the SDK can
+# sit beside plugins in the plugins folder without being run as one. The catalog
+# has to agree, or the SDK gets published as a plugin.
+VENDORED_SDK = {"vee.ts", "vee.py", "vee.go"}
 
 
 def read_tags(text: str) -> dict[str, str]:
@@ -88,7 +92,10 @@ def plugins() -> list[Path]:
         d = ROOT / category
         if not d.is_dir():
             continue
-        found += sorted(p for p in d.iterdir() if p.is_file() and PLUGIN_RE.match(p.name))
+        found += sorted(
+            p for p in d.iterdir()
+            if p.is_file() and PLUGIN_RE.match(p.name) and p.name.lower() not in VENDORED_SDK
+        )
     return found
 
 

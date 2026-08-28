@@ -47,14 +47,16 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
+from vee import JSONMenu
+
 LIMIT = 10
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
 CACHE_DIR = os.environ.get("SWIFTBAR_PLUGIN_CACHE_PATH") or os.environ.get("TMPDIR", "/tmp")
 CACHE_FILE = os.path.join(CACHE_DIR, "github.cache.json")
 
 
-def emit(obj):
-    sys.stdout.write(json.dumps(obj))
+def emit(menu):
+    menu.print()
     sys.exit(0)
 
 
@@ -199,35 +201,36 @@ def age_str(iso):
     return f"{int(secs // 86400)}d ago"
 
 
-def pr_item(pr, is_review_section):
+def add_pr_item(section, pr, is_review_section):
     # pr may have come back from disk cache (see load_cache) rather than a
     # fresh API response, so its "url" is untrusted: only ever emit it as an
     # href when it is actually a github.com link, never whatever a
     # truncated/hand-edited/world-writable cache file happens to contain.
     url = pr.get("url", "")
     if not url.startswith("https://github.com/"):
-        return None
+        return False
     if is_review_section:
         color, sfimage = "orange", "eye"
     else:
         color, sfimage = ("gray", "pencil") if pr.get("draft") else ("green", "checkmark.circle")
-    return {
-        "text": f"{pr.get('repo', '?')} #{pr.get('number', '?')} {pr.get('title', '(untitled)')}",
-        "href": url,
-        "color": color,
-        "sfimage": sfimage,
-        "tooltip": f"by {pr.get('author', '?')} · opened {age_str(pr.get('created_at'))}",
-    }
+    section.item(
+        f"{pr.get('repo', '?')} #{pr.get('number', '?')} {pr.get('title', '(untitled)')}",
+        href=url,
+        color=color,
+        sfimage=sfimage,
+        tooltip=f"by {pr.get('author', '?')} · opened {age_str(pr.get('created_at'))}",
+    )
+    return True
 
 
-def section(header_text, prs, is_review_section, empty_text):
-    items = [{"header": True, "text": header_text}]
-    rows = [row for row in (pr_item(pr, is_review_section) for pr in prs[:LIMIT]) if row]
-    if rows:
-        items.extend(rows)
-    else:
-        items.append({"text": empty_text, "color": "gray", "disabled": True})
-    return items
+def add_section(dropdown, header_text, prs, is_review_section, empty_text):
+    dropdown.item(header_text, header=True)
+    any_rows = False
+    for pr in prs[:LIMIT]:
+        if add_pr_item(dropdown, pr, is_review_section):
+            any_rows = True
+    if not any_rows:
+        dropdown.item(empty_text, color="gray", disabled=True)
 
 
 def build_menu(review, mine, notif_count, stale_since=None):
@@ -237,70 +240,52 @@ def build_menu(review, mine, notif_count, stale_since=None):
     else:
         title_text, title_color = "Clear", "green"
 
-    items = []
-    if stale_since is not None:
-        items.append(
-            {
-                "text": f"stale — last updated {time.strftime('%H:%M', time.localtime(stale_since))}",
-                "color": "orange",
-                "sfimage": "exclamationmark.triangle",
-                "disabled": True,
-            }
-        )
-        items.append({"separator": True})
+    menu = JSONMenu()
+    menu.title(title_text, sfimage="chevron.left.forwardslash.chevron.right", color=title_color)
+    dropdown = menu.dropdown
 
-    items.extend(section("Waiting on your review", review, True, "Nothing waiting on your review"))
-    items.append({"separator": True})
-    items.extend(section("Your open PRs", mine, False, "You have no open PRs"))
+    if stale_since is not None:
+        dropdown.item(
+            f"stale — last updated {time.strftime('%H:%M', time.localtime(stale_since))}",
+            color="orange",
+            sfimage="exclamationmark.triangle",
+            disabled=True,
+        )
+        dropdown.separator()
+
+    add_section(dropdown, "Waiting on your review", review, True, "Nothing waiting on your review")
+    dropdown.separator()
+    add_section(dropdown, "Your open PRs", mine, False, "You have no open PRs")
 
     if notif_count is not None:
-        items.append({"separator": True})
-        items.append(
-            {
-                "text": f"{notif_count} unread notification{'s' if notif_count != 1 else ''}",
-                "href": "https://github.com/notifications",
-                "sfimage": "bell.badge" if notif_count else "bell",
-                "color": "blue" if notif_count else "gray",
-            }
+        dropdown.separator()
+        dropdown.item(
+            f"{notif_count} unread notification{'s' if notif_count != 1 else ''}",
+            href="https://github.com/notifications",
+            sfimage="bell.badge" if notif_count else "bell",
+            color="blue" if notif_count else "gray",
         )
 
-    items.append({"separator": True})
-    items.append({"text": "Refresh", "refresh": True, "sfimage": "arrow.clockwise"})
+    dropdown.separator()
+    dropdown.item("Refresh", refresh=True, sfimage="arrow.clockwise")
 
-    return {
-        "vee": 1,
-        "title": [
-            {
-                "text": title_text,
-                "sfimage": "chevron.left.forwardslash.chevron.right",
-                "color": title_color,
-            }
-        ],
-        "items": items,
-    }
+    return menu
 
 
 def emit_no_auth():
-    emit(
-        {
-            "vee": 1,
-            "title": [
-                {"text": "GitHub", "sfimage": "chevron.left.forwardslash.chevron.right", "color": "gray"}
-            ],
-            "items": [
-                {"text": "Not connected to GitHub", "color": "gray"},
-                {"separator": True},
-                {
-                    "text": "Option A: install the gh CLI and run `gh auth login`",
-                    "href": "https://cli.github.com",
-                },
-                {
-                    "text": "Option B: set a GITHUB_TOKEN in this plugin's preferences",
-                    "href": "https://github.com/settings/tokens",
-                },
-            ],
-        }
+    menu = JSONMenu()
+    menu.title("GitHub", sfimage="chevron.left.forwardslash.chevron.right", color="gray")
+    dropdown = menu.dropdown
+    dropdown.item("Not connected to GitHub", color="gray")
+    dropdown.separator()
+    dropdown.item(
+        "Option A: install the gh CLI and run `gh auth login`", href="https://cli.github.com"
     )
+    dropdown.item(
+        "Option B: set a GITHUB_TOKEN in this plugin's preferences",
+        href="https://github.com/settings/tokens",
+    )
+    emit(menu)
 
 
 def emit_stale_or_error():
@@ -314,15 +299,10 @@ def emit_stale_or_error():
                 stale_since=cached.get("ts") or time.time(),
             )
         )
-    emit(
-        {
-            "vee": 1,
-            "title": [
-                {"text": "GitHub ⚠", "sfimage": "chevron.left.forwardslash.chevron.right", "color": "red"}
-            ],
-            "items": [{"text": "Couldn't reach the GitHub API", "color": "gray"}],
-        }
-    )
+    menu = JSONMenu()
+    menu.title("GitHub ⚠", sfimage="chevron.left.forwardslash.chevron.right", color="red")
+    menu.dropdown.item("Couldn't reach the GitHub API", color="gray")
+    emit(menu)
 
 
 def main():

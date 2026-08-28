@@ -4,26 +4,26 @@
   "homepage": "https://github.com/navbytes/vee-plugins",
   "plugins": [
     {
-      "path": "System/audio.10s.sh",
+      "path": "System/audio.10s.py",
       "title": "Audio",
       "category": "System",
       "summary": "Output device, volume, and mute, with a live slider and toggle right in the menu.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "7da2eac652d7ccb7eaace8eef977932f0251df99baaa969389419bfd2d2f4262",
+      "sha256": "289045777973dd5b3c429c6c403fdcdda4e515240635d305fc815001bec98c9d",
       "deprecated": false,
       "tags": [
         "system"
       ]
     },
     {
-      "path": "System/battery.5m.sh",
+      "path": "System/battery.5m.py",
       "title": "Battery",
       "category": "System",
       "summary": "Battery charge, time remaining, health, and adapter details, with a desktop widget gauge.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "213d08330293db4167b5930c48d5c28e834fc9b2dc07a179963ae32f46e6a3d6",
+      "sha256": "901d837dc520d74ca498baeb6e38ef8dfedc323b6d2cbe8329656f31fb0902d1",
       "deprecated": false,
       "tags": [
         "system",
@@ -32,39 +32,39 @@
       "surface": "both"
     },
     {
-      "path": "System/caffeine.1m.sh",
+      "path": "System/caffeine.1m.py",
       "title": "Caffeine",
       "category": "System",
       "summary": "Keep your Mac awake \u2014 indefinitely or for a timed session \u2014 from the menu bar.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "8118606b8a23925dd0b6bf131032be80e448c8fcdc63cc1f05bb924bb3f4de6f",
+      "sha256": "4f39a07b2172faeeb958e66a065adac4c3be27136dfea331aa2cceb067a57145",
       "deprecated": false,
       "tags": [
         "system"
       ]
     },
     {
-      "path": "System/disk-space.10m.sh",
+      "path": "System/disk-space.10m.py",
       "title": "Disk Space",
       "category": "System",
       "summary": "Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "2665fec59ab9263387bc1a515d15cea77ce8aa37e98dd2ca6b0cb1f9d4591c8b",
+      "sha256": "8f9ab716a7cd69df17f836d26d20a7443fbed350e0da6474d4db6e275d3a699c",
       "deprecated": false,
       "tags": [
         "system"
       ]
     },
     {
-      "path": "System/system-vitals.10s.sh",
+      "path": "System/system-vitals.10s.py",
       "title": "System Vitals",
       "category": "System",
       "summary": "CPU load, memory pressure, swap, and uptime, with a live history sparkline and a desktop widget.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "1a4f55bbbb818f508ba6f0fcd3c7472c40b59036d474cb8f915f3eaa788d72bd",
+      "sha256": "8a42f075c0f0884e7242480f3fa10256644d125489aa103b2432ee95a548c4eb",
       "deprecated": false,
       "tags": [
         "system",
@@ -79,7 +79,7 @@
       "summary": "Processes listening on your dev ports, with open/copy/kill actions.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "f950f0509ff1f4347817e6fb28f09652aeccf423d89fd2832ac96cbf1512995d",
+      "sha256": "cbe8fc62a03580ce3bbe4387c70e771643a545f6e62bbee9c102b8de4d23049f",
       "deprecated": false,
       "tags": [
         "developer"
@@ -92,7 +92,7 @@
       "summary": "Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "c55bbdda6cb8cf504b0d879d34eaad6adcb44a7f78161cb394c00bf17f11c585",
+      "sha256": "f2fc165b144bd7357c77c3d0ce016fe64e87de0aa6881ec89d07bdeca31eaf53",
       "deprecated": false,
       "tags": [
         "developer",
@@ -106,7 +106,7 @@
       "summary": "PRs waiting on your review, your own open PRs, and unread notifications.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "70ef83cf97fe214dedc1ecb0e2ab6e2b2b37970c284671ba63869113557aa62b",
+      "sha256": "9ce3a198f4ed897ba65eb3f55e7f03447981c20e78b4338e0c726be9efc5b79c",
       "deprecated": false,
       "tags": [
         "developer",
@@ -121,11 +121,28 @@
       "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "4b8db3979a325d672fae8f6d096d0a32f3bd22867a515354e6d18feefb30b9d2",
+      "sha256": "972fca1e72ed24c5b231e771700868323ad96b1b55ccb375a7bddc5407ec2d2c",
       "deprecated": false,
       "tags": [
         "network"
       ]
+    },
+    {
+      "path": "Monitoring/litellm-cost.90s.ts",
+      "title": "LiteLLM Cost",
+      "category": "Monitoring",
+      "summary": "Daily LLM spend, errors, cache vs budget.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "33752e4606523fd7ab416f0b0427e9c235653d6ff79ddf5b6b118aacda1d1b3f",
+      "deprecated": false,
+      "tags": [
+        "monitoring",
+        "network",
+        "secrets",
+        "widget"
+      ],
+      "surface": "both"
     },
     {
       "path": "Monitoring/uptime.5m.py",
@@ -134,7 +151,7 @@
       "summary": "Parallel HTTP health checks for your own endpoints, in the menu bar and as a widget board.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "29c819fb80c21072a69a046bec26138bd80d7d9177ca06d873ac22efdb423e8e",
+      "sha256": "78e3d0a40faa652c3cace4dcfee961a1c7f37a92e219b60991bd6889362b4a43",
       "deprecated": false,
       "tags": [
         "monitoring",
@@ -159,13 +176,13 @@
       ]
     },
     {
-      "path": "Productivity/pomodoro.sh",
+      "path": "Productivity/pomodoro.py",
       "title": "Pomodoro",
       "category": "Productivity",
       "summary": "A streaming menu-bar focus timer \u2014 focus/break phases, a daily tally, and one-click controls.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "3173616df7cfccc07ccc5abe937d360c4966b14cfc1dbd6630cc204c0c03d617",
+      "sha256": "8bb043fe76212736374597dda1a66a9da1057e1030fc210c392db035b9cac9a1",
       "deprecated": false,
       "tags": [
         "productivity",
@@ -179,7 +196,7 @@
       "summary": "Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "9cfd39a91bf0e42f9cf0c1a54284a60723fd9fd1a6b5cc464e1dd0b48dce9d40",
+      "sha256": "3c3d073e155de9b4ef9d274c9c9da49e77ec61442ea2a59c506d6c5b12451c45",
       "deprecated": false,
       "tags": [
         "productivity"

@@ -51,6 +51,8 @@ import re
 import subprocess
 import sys
 
+from vee import Board, JSONMenu, Stat
+
 MAX_TARGETS = 12
 CURL_TIMEOUT = 6  # seconds, per-target -- matches the brief's own curl flags
 SLOW_THRESHOLD = 1.5  # seconds -- a fast 2xx/3xx below this is "up"
@@ -239,27 +241,23 @@ def status_text(row):
 
 if VEE_TARGET == "widget":
     if not targets:
-        card = {
-            "vee_widget": 1,
-            "template": "stat",
-            "title": "Uptime",
-            "symbol": "questionmark.circle",
-            "tint": "gray",
-            "value": "Not configured",
-            "caption": "Set UPTIME_TARGETS",
-            "status": "warning",
-        }
+        card = Stat(
+            title="Uptime",
+            symbol="questionmark.circle",
+            tint="gray",
+            value="Not configured",
+            caption="Set UPTIME_TARGETS",
+            status="warning",
+        )
     else:
-        card = {
-            "vee_widget": 1,
-            "template": "board",
-            "title": "Uptime",
-            "symbol": "checkmark.circle" if not down else "exclamationmark.triangle",
-            "tint": "green" if not down else "red",
-            "value": "All up" if not down else f"{len(down)} down",
-            "caption": f"{len(targets)} target{'s' if len(targets) != 1 else ''}",
-            "status": widget_status,
-            "items": [
+        card = Board(
+            title="Uptime",
+            symbol="checkmark.circle" if not down else "exclamationmark.triangle",
+            tint="green" if not down else "red",
+            value="All up" if not down else f"{len(down)} down",
+            caption=f"{len(targets)} target{'s' if len(targets) != 1 else ''}",
+            status=widget_status,
+            items=[
                 {
                     "label": row["label"],
                     "value": (
@@ -271,10 +269,10 @@ if VEE_TARGET == "widget":
                 }
                 for row in rows
             ],
-            "actions": [{"kind": "refresh", "label": "Refresh"}],
-            "refresh_after": 300,
-        }
-    print(json.dumps(card))
+            actions=[{"kind": "refresh", "label": "Refresh"}],
+            refreshAfter=300,
+        )
+    card.print()
     sys.stdout.flush()
     raise SystemExit(0)
 
@@ -283,70 +281,69 @@ if VEE_TARGET == "widget":
 # Menu mode
 # ---------------------------------------------------------------------------
 
+menu = JSONMenu()
+
 if not targets:
-    title = [{"text": "Not configured", "sfimage": "questionmark.circle", "color": "gray"}]
-    items = [
-        {"text": "No targets configured yet", "color": "gray"},
-        {
-            "text": "Set UPTIME_TARGETS, e.g.: API=https://api.example.com/health,Docs=https://docs.example.com",
-            "color": "gray",
-        },
-    ]
+    menu.title("Not configured", sfimage="questionmark.circle", color="gray")
+    items = menu.dropdown
+    items.item("No targets configured yet", color="gray")
+    items.item(
+        "Set UPTIME_TARGETS, e.g.: API=https://api.example.com/health,Docs=https://docs.example.com",
+        color="gray",
+    )
 else:
     if down:
-        title = [{"text": f"{len(down)} down", "sfimage": "exclamationmark.triangle", "color": "red"}]
+        menu.title(f"{len(down)} down", sfimage="exclamationmark.triangle", color="red")
     else:
-        title = [{"text": "All up", "sfimage": "checkmark.circle", "color": "green"}]
+        menu.title("All up", sfimage="checkmark.circle", color="green")
 
-    items = []
+    items = menu.dropdown
 
-    def target_row(row):
-        submenu = []
+    def target_row(section, row):
+        submenu = section.submenu(
+            status_text(row),
+            color=STATUS_COLOR[row["status"]],
+            href=row["url"],
+            tooltip=row["url"],
+        )
         if row["times"]:
-            submenu.append({
-                "text": f"Last {len(row['times'])} response times",
-                "sparkline": row["times"],
-                "sparklineColor": STATUS_COLOR[row["status"]],
-                "accessoryWidth": 140,
-                "accessoryHeight": 20,
-                "tooltip": f"Response time history for {row['label']}, in seconds",
-            })
+            submenu.item(
+                f"Last {len(row['times'])} response times",
+                sparkline=row["times"],
+                sparkline_color=STATUS_COLOR[row["status"]],
+                accessory_width=140,
+                accessory_height=20,
+                tooltip=f"Response time history for {row['label']}, in seconds",
+            )
         else:
-            submenu.append({"text": "No response-time history yet", "color": "gray"})
-        submenu.append({
-            "text": f"Last error: {row['last_error']}" if row["last_error"] else "No errors recorded",
-            "color": "red" if row["last_error"] else "gray",
-        })
-        return {
-            "text": status_text(row),
-            "color": STATUS_COLOR[row["status"]],
-            "href": row["url"],
-            "tooltip": row["url"],
-            "submenu": submenu,
-        }
+            submenu.item("No response-time history yet", color="gray")
+        submenu.item(
+            f"Last error: {row['last_error']}" if row["last_error"] else "No errors recorded",
+            color="red" if row["last_error"] else "gray",
+        )
 
     for group_label, group in (("Down", down), ("Degraded", degraded), ("Up", up)):
         if not group:
             continue
-        items.append({"header": True, "text": group_label})
+        items.item(group_label, header=True)
         for row in group:
-            items.append(target_row(row))
-        items.append({"separator": True})
+            target_row(items, row)
+        items.separator()
 
-    items.append({
-        "text": "Status overview",
-        "chart": {
+    items.item(
+        "Status overview",
+        chart={
             "kind": "stackedbar",
             "values": [len(up), len(degraded), len(down)],
             "labels": ["Up", "Degraded", "Down"],
             "colors": ["green", "orange", "red"],
         },
-        "accessoryWidth": "full",
-        "accessoryHeight": 14,
-    })
-    items.append({"separator": True})
+        accessory_width="full",
+        accessory_height=14,
+    )
+    items.separator()
 
-items.append({"text": "Refresh", "refresh": True, "sfimage": "arrow.clockwise"})
+items.item("Refresh", refresh=True, sfimage="arrow.clockwise")
 
-print(json.dumps({"vee": 1, "title": title, "items": items}))
+menu.print()
 sys.stdout.flush()

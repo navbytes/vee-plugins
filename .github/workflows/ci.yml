@@ -31,27 +31,60 @@ jobs:
           print(f"{len(seen)} plugins OK")
           PY
 
-      - name: Shell syntax
-        run: for f in */*.sh; do bash -n "$f"; done
-
       - name: Python syntax
         run: python3 -m py_compile */*.py scripts/*.py
+
+      # Every plugin builds its output with the SDK, which must be vendored
+      # beside it — both here and, at runtime, in the plugins folder. A missing
+      # copy is an ImportError for every plugin in that folder.
+      - name: Vendored SDK present wherever it is imported
+        run: |
+          fail=0
+          for dir in System Developer Network Monitoring Productivity; do
+            [ -d "$dir" ] || continue
+            if ls "$dir"/*.py >/dev/null 2>&1 && grep -lqE '^from vee import|^import vee' "$dir"/*.py 2>/dev/null; then
+              [ -f "$dir/vee.py" ] || { echo "::error::$dir imports vee but has no vee.py"; fail=1; }
+            fi
+            if ls "$dir"/*.ts >/dev/null 2>&1 && grep -lq 'from "\./vee\.ts"' "$dir"/*.ts 2>/dev/null; then
+              [ -f "$dir/vee.ts" ] || { echo "::error::$dir imports ./vee.ts but has no vee.ts"; fail=1; }
+            fi
+          done
+          exit $fail
+
+      - name: Vendored SDK copies are identical
+        run: |
+          for sdk in vee.py vee.ts; do
+            n=$(find . -name "$sdk" -not -path './.git/*' -exec md5sum {} + 2>/dev/null | awk '{print $1}' | sort -u | wc -l)
+            [ "$n" -le 1 ] || { echo "::error::$sdk copies differ — run scripts/sync-sdk.sh"; exit 1; }
+          done
+          echo "SDK copies consistent"
+
+      - name: Plugins import the vendored SDK, never npm
+        run: |
+          if grep -rn '"@navbytes/vee"' System Developer Network Monitoring Productivity 2>/dev/null; then
+            echo "::error::import the vendored ./vee.ts — @navbytes/vee does not resolve in the plugins folder"; exit 1
+          fi
+          echo "no npm specifiers"
+
+      - name: SDK is not catalogued as a plugin
+        run: |
+          python3 - <<'PY'
+          import json
+          m = json.load(open("vee-catalog.json"))
+          bad = [p["path"] for p in m["plugins"] if p["path"].rsplit("/", 1)[-1] in ("vee.py", "vee.ts", "vee.go")]
+          assert not bad, f"vendored SDK catalogued as a plugin: {bad}"
+          print(f"{len(m['plugins'])} plugins, no SDK entries")
+          PY
 
       - uses: ludeeus/action-shellcheck@master
         with:
           severity: warning
           format: gcc
-        env:
-          # SC2016: single-quoted $VAR is intentional inside JSON/AppleScript payloads.
-          # SC2086: word splitting is intentional where we build argv lists.
-          SHELLCHECK_OPTS: -e SC2016 -e SC2086
+          scandir: './scripts'
 
       - name: Shebang matches extension
         run: |
           fail=0
-          for f in */*.sh; do
-            head -1 "$f" | grep -qE '(bash|sh|zsh)$' || { echo "::error file=$f::.sh with a non-shell shebang"; fail=1; }
-          done
           for f in */*.py; do
             head -1 "$f" | grep -q 'python3' || { echo "::error file=$f::.py with a non-python shebang"; fail=1; }
           done
@@ -84,6 +117,6 @@ jobs:
 
       - name: No plugin ships executable (users chmod after reading)
         run: |
-          if find . -path ./.git -prune -o \( -name '*.sh' -o -name '*.py' -o -name '*.swift' \) -not -path './scripts/*' -perm -u+x -print | grep .; then
+          if find . -path ./.git -prune -o \( -name '*.py' -o -name '*.ts' -o -name '*.swift' \) -not -path './scripts/*' -perm -u+x -print | grep .; then
             echo "::error::plugins must ship non-executable"; exit 1
           fi

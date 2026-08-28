@@ -29,6 +29,8 @@ import shutil
 import subprocess
 import sys
 
+from vee import JSONMenu
+
 PORT_RANGES = "3000-3010,4000,5173,8000-8100,8080,9000"
 SHOW_ALL = False
 
@@ -54,9 +56,16 @@ PORT_RANGES = env_str("PORT_RANGES", PORT_RANGES)
 SHOW_ALL = env_bool("SHOW_ALL", SHOW_ALL)
 
 
-def emit(obj):
-    sys.stdout.write(json.dumps(obj))
+def emit(menu):
+    menu.print()
     sys.exit(0)
+
+
+def single_row(title_text, row_text, color="gray"):
+    menu = JSONMenu()
+    menu.title(title_text, sfimage="network", color=color)
+    menu.dropdown.item(row_text, color="gray")
+    emit(menu)
 
 
 def parse_ranges(spec):
@@ -117,56 +126,41 @@ def listeners():
     return sorted(seen.values(), key=lambda x: x["port"])
 
 
-def listener_item(entry, matched):
+def add_listener_item(section, entry, matched):
     port, command, pid = entry["port"], entry["command"], entry["pid"]
     url = f"http://localhost:{port}"
-    submenu = [
-        {"text": f"Open {url}", "href": url, "sfimage": "safari"},
-        {
-            "text": "Copy URL",
-            "shell": "/bin/sh",
-            "params": ["-c", f"printf '%s' {json.dumps(url)} | /usr/bin/pbcopy"],
-            "sfimage": "doc.on.doc",
-            "tooltip": f"Copies {url} to the clipboard",
-        },
-        {"separator": True},
-        {
-            "text": f"Kill process (pid {pid})",
-            "color": "red",
-            "sfimage": "xmark.octagon",
-            "shell": "/bin/kill",
-            "params": [pid],
-            "tooltip": f"Sends SIGTERM to {command} (pid {pid})",
-            "searchable": False,
-        },
-    ]
-    return {
-        "text": f":{port} — {command} (pid {pid})",
-        "color": "blue" if matched else "gray",
-        "sfimage": "circle.fill",
-        "submenu": submenu,
-    }
+    sub = section.submenu(
+        f":{port} — {command} (pid {pid})",
+        color="blue" if matched else "gray",
+        sfimage="circle.fill",
+    )
+    sub.item(f"Open {url}", href=url, sfimage="safari")
+    sub.item(
+        "Copy URL",
+        shell="/bin/sh",
+        params=["-c", f"printf '%s' {json.dumps(url)} | /usr/bin/pbcopy"],
+        sfimage="doc.on.doc",
+        tooltip=f"Copies {url} to the clipboard",
+    )
+    sub.separator()
+    sub.item(
+        f"Kill process (pid {pid})",
+        color="red",
+        sfimage="xmark.octagon",
+        shell="/bin/kill",
+        params=[pid],
+        tooltip=f"Sends SIGTERM to {command} (pid {pid})",
+        searchable=False,
+    )
 
 
 def main():
     if not shutil.which("lsof"):
-        emit(
-            {
-                "vee": 1,
-                "title": [{"text": "lsof missing", "sfimage": "network", "color": "red"}],
-                "items": [{"text": "lsof not found on PATH", "color": "gray"}],
-            }
-        )
+        single_row("lsof missing", "lsof not found on PATH", color="red")
 
     all_listeners = listeners()
     if all_listeners is None:
-        emit(
-            {
-                "vee": 1,
-                "title": [{"text": "lsof failed", "sfimage": "network", "color": "red"}],
-                "items": [{"text": "Couldn't run lsof (timed out or errored)", "color": "gray"}],
-            }
-        )
+        single_row("lsof failed", "Couldn't run lsof (timed out or errored)", color="red")
 
     ranges = parse_ranges(PORT_RANGES)
     configured = [e for e in all_listeners if in_ranges(e["port"], ranges)]
@@ -175,32 +169,32 @@ def main():
     title_color = "blue" if configured else "gray"
     title_text = f"{len(configured)} ports"
 
-    items = []
-    if configured:
-        items.append({"header": True, "text": "Configured ports"})
-        items.extend(listener_item(e, True) for e in configured)
-    if SHOW_ALL and other:
-        if items:
-            items.append({"separator": True})
-        items.append({"header": True, "text": "Other listeners"})
-        items.extend(listener_item(e, False) for e in other)
+    menu = JSONMenu()
+    menu.title(title_text, sfimage="network", color=title_color)
+    dropdown = menu.dropdown
 
-    if not items:
-        items.append(
-            {
-                "text": "Nothing listening on your dev ports",
-                "sfimage": "checkmark.circle",
-                "color": "green",
-            }
+    any_items = False
+    if configured:
+        dropdown.item("Configured ports", header=True)
+        for e in configured:
+            add_listener_item(dropdown, e, True)
+        any_items = True
+    if SHOW_ALL and other:
+        if any_items:
+            dropdown.separator()
+        dropdown.item("Other listeners", header=True)
+        for e in other:
+            add_listener_item(dropdown, e, False)
+        any_items = True
+
+    if not any_items:
+        dropdown.item(
+            "Nothing listening on your dev ports",
+            sfimage="checkmark.circle",
+            color="green",
         )
 
-    emit(
-        {
-            "vee": 1,
-            "title": [{"text": title_text, "sfimage": "network", "color": title_color}],
-            "items": items,
-        }
-    )
+    emit(menu)
 
 
 if __name__ == "__main__":

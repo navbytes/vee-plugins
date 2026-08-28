@@ -30,7 +30,6 @@
 # <vee.exec>git,open,$GIT_EDITOR_CMD (user-configured; blank by default, see xbar.var above)</vee.exec>
 # <vee.filesystem.read>~/repos (configurable via GIT_ROOTS)</vee.filesystem.read>
 
-import json
 import os
 import re
 import shlex
@@ -38,24 +37,23 @@ import shutil
 import subprocess
 import sys
 
+from vee import JSONMenu, JSONSection
+
 MAX_REPOS = 40
 GIT_ROOTS = os.environ.get("GIT_ROOTS", "~/repos")
 GIT_EDITOR_CMD = os.environ.get("GIT_EDITOR_CMD", "").strip()
 
 
-def emit(obj):
-    sys.stdout.write(json.dumps(obj))
+def emit(menu):
+    menu.print()
     sys.exit(0)
 
 
 def single_row(title_text, row_text, color="gray", sfimage="arrow.triangle.branch"):
-    emit(
-        {
-            "vee": 1,
-            "title": [{"text": title_text, "sfimage": sfimage, "color": color}],
-            "items": [{"text": row_text, "color": "gray"}],
-        }
-    )
+    menu = JSONMenu()
+    menu.title(title_text, sfimage=sfimage, color=color)
+    menu.dropdown.item(row_text, color="gray")
+    emit(menu)
 
 
 def run(cmd, cwd):
@@ -169,44 +167,47 @@ def repo_info(path):
     }
 
 
-def repo_item(info, color):
-    counts = f"+{info['added']} ~{info['modified']} -{info['deleted']}"
-    submenu = [
-        {
-            "text": "Open in Finder",
-            "shell": "/usr/bin/open",
-            "params": [info["path"]],
-            "sfimage": "finder",
-        },
-        {
-            "text": "Open in Terminal",
-            "shell": "/usr/bin/open",
-            "params": ["-a", "Terminal", info["path"]],
-            "sfimage": "terminal",
-        },
-    ]
+def add_repo_actions(section, info):
+    """Populates a repo's action rows (shared by its submenu and its
+    alternate's submenu)."""
+    section.item(
+        "Open in Finder", shell="/usr/bin/open", params=[info["path"]], sfimage="finder"
+    )
+    section.item(
+        "Open in Terminal",
+        shell="/usr/bin/open",
+        params=["-a", "Terminal", info["path"]],
+        sfimage="terminal",
+    )
     if GIT_EDITOR_CMD:
         parts = shlex.split(GIT_EDITOR_CMD)
-        submenu.append(
-            {
-                "text": f"Open in {GIT_EDITOR_CMD}",
-                "shell": parts[0],
-                "params": parts[1:] + [info["path"]],
-                "sfimage": "chevron.left.forwardslash.chevron.right",
-            }
+        section.item(
+            f"Open in {GIT_EDITOR_CMD}",
+            shell=parts[0],
+            params=parts[1:] + [info["path"]],
+            sfimage="chevron.left.forwardslash.chevron.right",
         )
     if info["github_url"]:
-        submenu.append(
-            {"text": "Open on GitHub", "href": info["github_url"], "sfimage": "link"}
-        )
+        section.item("Open on GitHub", href=info["github_url"], sfimage="link")
 
-    return {
-        "text": f"{info['name']}  ·  {info['branch']}  ·  {counts}",
-        "color": color,
-        "tooltip": info["path"],
-        "submenu": submenu,
-        "alternate": {"text": info["path"], "color": color, "submenu": submenu},
-    }
+
+def repo_alternate(info, color):
+    """The path-form row shown when a modifier key is held, with the same
+    submenu actions as the main row."""
+    rows: list = []
+    add_repo_actions(JSONSection(rows), info)
+    return {"text": info["path"], "color": color, "submenu": rows}
+
+
+def add_repo_item(section, info, color):
+    counts = f"+{info['added']} ~{info['modified']} -{info['deleted']}"
+    sub = section.submenu(
+        f"{info['name']}  ·  {info['branch']}  ·  {counts}",
+        color=color,
+        tooltip=info["path"],
+        alternate=repo_alternate(info, color),
+    )
+    add_repo_actions(sub, info)
 
 
 def main():
@@ -225,11 +226,11 @@ def main():
     for path in repos:
         info = repo_info(path)
         if info["dirty"]:
-            uncommitted.append(repo_item(info, "red"))
+            uncommitted.append(info)
         elif info["has_upstream"] and info["ahead"] > 0:
-            unpushed.append(repo_item(info, "orange"))
+            unpushed.append(info)
         else:
-            clean.append(repo_item(info, "gray"))
+            clean.append(info)
 
     if uncommitted:
         title_text, title_color = f"{len(uncommitted)} dirty", "orange"
@@ -238,34 +239,32 @@ def main():
     else:
         title_text, title_color = "Clean", "green"
 
-    items = []
-    if uncommitted:
-        items.append({"header": True, "text": "Uncommitted changes"})
-        items.extend(uncommitted)
-    if unpushed:
-        if items:
-            items.append({"separator": True})
-        items.append({"header": True, "text": "Unpushed commits"})
-        items.extend(unpushed)
-    if clean:
-        if items:
-            items.append({"separator": True})
-        items.append({"header": True, "text": "Clean"})
-        items.extend(clean)
+    menu = JSONMenu()
+    menu.title(title_text, sfimage="arrow.triangle.branch", color=title_color)
+    dropdown = menu.dropdown
 
-    emit(
-        {
-            "vee": 1,
-            "title": [
-                {
-                    "text": title_text,
-                    "sfimage": "arrow.triangle.branch",
-                    "color": title_color,
-                }
-            ],
-            "items": items,
-        }
-    )
+    any_items = False
+    if uncommitted:
+        dropdown.item("Uncommitted changes", header=True)
+        for info in uncommitted:
+            add_repo_item(dropdown, info, "red")
+        any_items = True
+    if unpushed:
+        if any_items:
+            dropdown.separator()
+        dropdown.item("Unpushed commits", header=True)
+        for info in unpushed:
+            add_repo_item(dropdown, info, "orange")
+        any_items = True
+    if clean:
+        if any_items:
+            dropdown.separator()
+        dropdown.item("Clean", header=True)
+        for info in clean:
+            add_repo_item(dropdown, info, "gray")
+        any_items = True
+
+    emit(menu)
 
 
 if __name__ == "__main__":

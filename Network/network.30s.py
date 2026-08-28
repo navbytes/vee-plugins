@@ -53,6 +53,8 @@ import subprocess
 import sys
 import time
 
+from vee import JSONMenu
+
 CACHE_DIR = os.environ.get("SWIFTBAR_PLUGIN_CACHE_PATH") or os.environ.get("TMPDIR", "/tmp")
 try:
     os.makedirs(CACHE_DIR, exist_ok=True)
@@ -216,10 +218,10 @@ def signal_color(progress):
 # ---------------------------------------------------------------------------
 
 def copy_row(label, value):
+    """Returns (text, kwargs) for a JSONSection.item() clipboard-copy row."""
     if not value:
-        return {"text": f"{label}: —", "color": "gray", "disabled": True}
-    return {
-        "text": f"{label}: {value}",
+        return f"{label}: —", {"color": "gray", "disabled": True}
+    return f"{label}: {value}", {
         "tooltip": f"Click to copy {value} to the clipboard",
         "shell": "/usr/bin/python3",
         "params": [
@@ -299,6 +301,8 @@ is_wifi_active = bool(default_if) and default_if == wifi_device
 wifi_details = get_wifi_details(wifi_device)
 ssid_fallback = get_ssid_fallback(wifi_device)
 
+menu = JSONMenu()
+
 # --- Title -------------------------------------------------------------
 if is_wifi_active:
     if wifi_details and wifi_details.get("rssi") is not None:
@@ -308,76 +312,80 @@ if is_wifi_active:
     else:
         title_color = "blue"
         title_text = ssid_fallback or "Wi-Fi"
-    title = [{"text": title_text, "sfimage": "wifi", "color": title_color}]
+    menu.title(title_text, sfimage="wifi", color=title_color)
 elif default_if:
-    title = [{"text": hw_map.get(default_if, default_if), "sfimage": "cable.connector", "color": "green"}]
+    menu.title(hw_map.get(default_if, default_if), sfimage="cable.connector", color="green")
 else:
-    title = [{"text": "No network", "sfimage": "wifi.slash", "color": "red"}]
+    menu.title("No network", sfimage="wifi.slash", color="red")
 
-items = []
+items = menu.dropdown
 
 # --- Wi-Fi section (always shown when Wi-Fi is associated, even if it is
 # not the interface carrying the default route) -------------------------
-items.append({"header": True, "text": "Wi-Fi"})
+items.item("Wi-Fi", header=True)
 if wifi_details and wifi_details.get("rssi") is not None:
     progress = signal_progress(wifi_details["rssi"])
-    items.append({"text": f"SSID: {wifi_details['ssid']}"})
-    items.append({
-        "text": f"Signal: {wifi_details['rssi']} dBm (noise {wifi_details['noise']} dBm)",
-        "color": signal_color(progress),
-        "progress": progress,
-        "progressWidth": 120,
-        "progressHeight": 6,
-        "tooltip": "RSSI mapped onto -90..-30 dBm",
-    })
-    items.append({"text": f"Channel: {wifi_details['channel']}"})
-    items.append({"text": f"PHY mode: {wifi_details['phymode']}"})
+    items.item(f"SSID: {wifi_details['ssid']}")
+    items.item(
+        f"Signal: {wifi_details['rssi']} dBm (noise {wifi_details['noise']} dBm)",
+        color=signal_color(progress),
+        progress=progress,
+        progress_width=120,
+        progress_height=6,
+        tooltip="RSSI mapped onto -90..-30 dBm",
+    )
+    items.item(f"Channel: {wifi_details['channel']}")
+    items.item(f"PHY mode: {wifi_details['phymode']}")
     rate = wifi_details["rate"]
-    items.append({"text": f"Tx rate: {rate} Mbps" if rate != "" else "Tx rate: unknown"})
+    items.item(f"Tx rate: {rate} Mbps" if rate != "" else "Tx rate: unknown")
 elif ssid_fallback:
-    items.append({"text": f"SSID: {ssid_fallback}"})
-    items.append({
-        "text": "Signal details unavailable (system_profiler didn't report them) -- showing SSID only.",
-        "color": "gray",
-    })
+    items.item(f"SSID: {ssid_fallback}")
+    items.item(
+        "Signal details unavailable (system_profiler didn't report them) -- showing SSID only.",
+        color="gray",
+    )
 else:
-    items.append({"text": "Not connected to Wi-Fi", "color": "gray"})
+    items.item("Not connected to Wi-Fi", color="gray")
 
 # --- Addresses -----------------------------------------------------------
-items.append({"separator": True})
-items.append({"header": True, "text": "Addresses"})
+items.separator()
+items.item("Addresses", header=True)
 if default_if:
-    items.append(copy_row(f"IPv4 ({default_if})", get_local_ipv4(default_if)))
-    items.append(copy_row(f"IPv6 ({default_if})", get_local_ipv6(default_if)))
-    items.append(copy_row("Gateway", get_gateway()))
+    text, kwargs = copy_row(f"IPv4 ({default_if})", get_local_ipv4(default_if))
+    items.item(text, **kwargs)
+    text, kwargs = copy_row(f"IPv6 ({default_if})", get_local_ipv6(default_if))
+    items.item(text, **kwargs)
+    text, kwargs = copy_row("Gateway", get_gateway())
+    items.item(text, **kwargs)
     dns_servers = get_dns_servers()
     if dns_servers:
         for i, server in enumerate(dns_servers, start=1):
-            items.append(copy_row(f"DNS {i}", server))
+            text, kwargs = copy_row(f"DNS {i}", server)
+            items.item(text, **kwargs)
     else:
-        items.append({"text": "DNS: none found", "color": "gray"})
+        items.item("DNS: none found", color="gray")
 else:
-    items.append({"text": "No active network connection", "color": "gray"})
+    items.item("No active network connection", color="gray")
 
 # --- Public IP (opt-in) ---------------------------------------------------
-items.append({"separator": True})
-items.append({"header": True, "text": "Public IP"})
+items.separator()
+items.item("Public IP", header=True)
 if SHOW_PUBLIC_IP:
     ip, from_cache = get_public_ip()
     if ip:
-        row = copy_row("Public IP", ip)
+        text, kwargs = copy_row("Public IP", ip)
         if from_cache:
-            row["tooltip"] += " (cached, refreshes every 10 min)"
-        items.append(row)
+            kwargs["tooltip"] += " (cached, refreshes every 10 min)"
+        items.item(text, **kwargs)
     else:
-        items.append({"text": "Public IP lookup failed (api.ipify.org unreachable)", "color": "orange"})
+        items.item("Public IP lookup failed (api.ipify.org unreachable)", color="orange")
 else:
-    items.append({"text": "Public IP lookup is off", "color": "gray"})
-    items.append({"text": "Enable SHOW_PUBLIC_IP in plugin Settings to check api.ipify.org", "color": "gray"})
+    items.item("Public IP lookup is off", color="gray")
+    items.item("Enable SHOW_PUBLIC_IP in plugin Settings to check api.ipify.org", color="gray")
 
 # --- Latency (opt-in) ------------------------------------------------------
-items.append({"separator": True})
-items.append({"header": True, "text": "Latency"})
+items.separator()
+items.item("Latency", header=True)
 if PING_ENABLED:
     rtt = ping_once(PING_HOST)
     history = load_ping_history()
@@ -390,7 +398,7 @@ if PING_ENABLED:
         except Exception:
             pass
     else:
-        items.append({"text": f"Ping to {PING_HOST} timed out", "color": "red"})
+        items.item(f"Ping to {PING_HOST} timed out", color="red")
 
     if history:
         latest = history[-1]
@@ -400,41 +408,38 @@ if PING_ENABLED:
             lat_color = "orange"
         else:
             lat_color = "red"
-        items.append({
-            "text": f"Current: {latest:.0f} ms to {PING_HOST}",
-            "color": lat_color,
-        })
-        items.append({
-            "text": "History",
-            "sparkline": history,
-            "sparklineColor": lat_color,
-            "accessoryWidth": 140,
-            "accessoryHeight": 20,
-            "tooltip": f"Last {len(history)} round-trips to {PING_HOST}",
-        })
+        items.item(f"Current: {latest:.0f} ms to {PING_HOST}", color=lat_color)
+        items.item(
+            "History",
+            sparkline=history,
+            sparkline_color=lat_color,
+            accessory_width=140,
+            accessory_height=20,
+            tooltip=f"Last {len(history)} round-trips to {PING_HOST}",
+        )
     elif rtt is None:
-        items.append({"text": "No round-trips recorded yet", "color": "gray"})
+        items.item("No round-trips recorded yet", color="gray")
 else:
-    items.append({"text": "Latency tracking is off", "color": "gray"})
-    items.append({"text": f"Enable PING_ENABLED in plugin Settings to ping {PING_HOST}", "color": "gray"})
+    items.item("Latency tracking is off", color="gray")
+    items.item(f"Enable PING_ENABLED in plugin Settings to ping {PING_HOST}", color="gray")
 
 # --- Actions ---------------------------------------------------------------
-items.append({"separator": True})
-items.append({
-    "text": "Open Network Settings",
-    "sfimage": "gearshape",
-    "shell": "/usr/bin/open",
-    "params": ["/System/Library/PreferencePanes/Network.prefPane"],
-    "terminal": False,
-})
-items.append({
-    "text": "Open Wireless Diagnostics",
-    "sfimage": "stethoscope",
-    "shell": "/usr/bin/open",
-    "params": ["-a", "Wireless Diagnostics"],
-    "terminal": False,
-})
-items.append({"text": "Refresh", "refresh": True, "sfimage": "arrow.clockwise"})
+items.separator()
+items.item(
+    "Open Network Settings",
+    sfimage="gearshape",
+    shell="/usr/bin/open",
+    params=["/System/Library/PreferencePanes/Network.prefPane"],
+    terminal=False,
+)
+items.item(
+    "Open Wireless Diagnostics",
+    sfimage="stethoscope",
+    shell="/usr/bin/open",
+    params=["-a", "Wireless Diagnostics"],
+    terminal=False,
+)
+items.item("Refresh", refresh=True, sfimage="arrow.clockwise")
 
-print(json.dumps({"vee": 1, "title": title, "items": items}))
+menu.print()
 sys.stdout.flush()
