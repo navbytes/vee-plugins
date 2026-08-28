@@ -115,13 +115,16 @@ def repo_info(path):
     # config that sets core.fsmonitor/core.hooksPath/include.path to an
     # arbitrary script would otherwise execute the moment `git status` (or
     # any other git call below) reads it — no click required. Forcing all
-    # three to empty on every invocation neutralizes that regardless of what
-    # the repo's own config says.
+    # these to empty on every invocation neutralizes that regardless of what
+    # the repo's own config says. (`-c include.path=` was tried here too and
+    # is a trap: git rejects an empty include.path with "relative config
+    # includes must come from files" and exits 128, so EVERY git call failed
+    # and every repo silently reported clean. It bought nothing anyway — a
+    # command-line -c cannot disable includes the repo's own config declares.)
     gitcmd = [
         "git",
         "-c", "core.fsmonitor=",
         "-c", "core.hooksPath=/dev/null",
-        "-c", "include.path=",
         "--no-optional-locks", "-C", path,
     ]
 

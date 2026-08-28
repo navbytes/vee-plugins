@@ -92,7 +92,7 @@
       "summary": "Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "f2fc165b144bd7357c77c3d0ce016fe64e87de0aa6881ec89d07bdeca31eaf53",
+      "sha256": "b1d87a9130be88b1b7fb6596cc3f86e2859299e85050a2e4030697bbaff5d96a",
       "deprecated": false,
       "tags": [
         "developer",
