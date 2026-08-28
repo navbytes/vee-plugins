@@ -211,10 +211,12 @@ def signal_color(progress):
 # ---------------------------------------------------------------------------
 # Clipboard-copying address row: shell + params, no string interpolation
 # into the shell script itself -- the value travels as a positional arg.
-# Deliberately no shell pipe here (a bare `python3 -c ... | pbcopy` would
-# work too, but a literal "|" inside a JSON string value trips up `vee
-# lint`'s JSON detection -- feeding pbcopy via subprocess.run(input=...)
-# sidesteps that entirely).
+# Deliberately no shell pipe: feeding pbcopy through
+# subprocess.run(input=...) keeps the copied value out of shell parsing
+# entirely, so an address that somehow contained shell metacharacters is
+# data, never syntax. (This also sidestepped a `vee lint` false positive on
+# a literal "|", since fixed upstream in vee#137 — the safety is the reason
+# it stays.)
 # ---------------------------------------------------------------------------
 
 def copy_row(label, value):
@@ -330,8 +332,8 @@ if wifi_details and wifi_details.get("rssi") is not None:
         f"Signal: {wifi_details['rssi']} dBm (noise {wifi_details['noise']} dBm)",
         color=signal_color(progress),
         progress=progress,
-        progress_width=120,
-        progress_height=6,
+        accessory_width=120,
+        accessory_height=6,
         tooltip="RSSI mapped onto -90..-30 dBm",
     )
     items.item(f"Channel: {wifi_details['channel']}")

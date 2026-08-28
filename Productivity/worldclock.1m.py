@@ -106,10 +106,10 @@ def working_hours_status(hour):
 
 def copy_action(dt):
     """Copy an ISO-8601 timestamp of `dt` to the clipboard. pbcopy only reads
-    stdin, so the click target is a tiny `/bin/sh -c` feeding it a heredoc —
-    a pipe would work too, but a literal `|` inside a shell= command trips
-    vee lint's text-protocol param scanner, which doesn't know a JSON
-    `params` string is opaque shell text rather than a Vee param list."""
+    stdin, so the click target is a tiny `/bin/sh -c` feeding it a heredoc.
+    A quoted heredoc passes the timestamp as literal bytes with no expansion,
+    which a pipe would not. (It also sidestepped a `vee lint` false positive
+    on a literal `|`, since fixed upstream in vee#137.)"""
     iso = dt.replace(microsecond=0).isoformat()
     cmd = f"pbcopy <<'EOF'\n{iso}\nEOF"
     return {

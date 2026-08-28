@@ -38,10 +38,10 @@
 # osascript -e, so each script validates it with a `case` guard — digits
 # only, in range — before it ever reaches osascript, and exits otherwise.
 # That closes off AppleScript injection via a value like `1);do shell script"...`.
-# No `|` anywhere in these scripts on purpose — a literal `|` inside a
-# shell= command trips vee lint's text-protocol param scanner (see the same
-# note in worldclock.1m.py), so the guards use separate `case` clauses and
-# an `if` instead of `|`/`||`.
+# The guards use separate `case` clauses rather than `|` alternation. That
+# began as a workaround for a `vee lint` false positive on a literal `|`
+# inside a shell= value, fixed upstream in vee#137; it stays because the
+# expanded form is the clearer one to audit, not because it is required.
 # ---------------------------------------------------------------------------
 #
 # ---------------------------------------------------------------------------

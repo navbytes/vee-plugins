@@ -10,7 +10,7 @@
       "summary": "Output device, volume, and mute, with a live slider and toggle right in the menu.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "289045777973dd5b3c429c6c403fdcdda4e515240635d305fc815001bec98c9d",
+      "sha256": "8e92a62f26eda7d87f4f6a8912f43ad5bae310cf9235a43a089056306840b2d4",
       "deprecated": false,
       "tags": [
         "system"
@@ -121,7 +121,7 @@
       "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "972fca1e72ed24c5b231e771700868323ad96b1b55ccb375a7bddc5407ec2d2c",
+      "sha256": "44fa4afc7c0959bd006e8662bc80cd5889d9167bad91b12830a1ff53a4cb84cd",
       "deprecated": false,
       "tags": [
         "network"
@@ -196,7 +196,7 @@
       "summary": "Team timezones with a working-hours indicator, a meeting-overlap planner, and click-to-copy timestamps.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "3c3d073e155de9b4ef9d274c9c9da49e77ec61442ea2a59c506d6c5b12451c45",
+      "sha256": "afa4de93446da82401b032075fca8c7167934b3d81221c122d32817019078e62",
       "deprecated": false,
       "tags": [
         "productivity"
