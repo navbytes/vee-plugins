@@ -22,6 +22,7 @@
 # <vee.desc>Free space per volume, a boot-volume breakdown, and the biggest top-level folders in your home directory.</vee.desc>
 # <vee.dependencies>python3,df,du</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/disk-space.png</vee.image>
 #
 # <vee.var>string(DISK_INCLUDE=): Extra mount-point prefixes to always list, comma-separated (e.g. /System/Volumes/Update). Leave blank for the sensible default (skips internal APFS system slices, Simulator disk images, and Recovery).</vee.var>
 # <vee.var>number(DISK_WARN=85): Percent used at which a volume's row turns red.</vee.var>

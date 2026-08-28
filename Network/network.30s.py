@@ -35,6 +35,7 @@
 # <vee.desc>Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.</vee.desc>
 # <vee.dependencies>python3</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/network.png</vee.image>
 #
 # <vee.var>boolean(SHOW_PUBLIC_IP=false): Look up your public IP via api.ipify.org. Makes a network call, cached 10 minutes.</vee.var>
 # <vee.var>boolean(PING_ENABLED=true): Track latency to PING_HOST with a sparkline (one ping per refresh).</vee.var>

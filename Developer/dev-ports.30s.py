@@ -15,6 +15,7 @@
 # <vee.desc>Processes listening on your dev ports, with open/copy/kill actions.</vee.desc>
 # <vee.dependencies>python3,lsof</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/dev-ports.png</vee.image>
 #
 # <vee.var>string(PORT_RANGES=3000-3010,4000,5173,8000-8100,8080,9000): Comma-separated ports/ranges to watch, e.g. "3000-3010,8080".</vee.var>
 # <vee.var>boolean(SHOW_ALL=false): Also list every other listening port, not just PORT_RANGES.</vee.var>

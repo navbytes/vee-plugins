@@ -6,6 +6,7 @@
 # <vee.desc>Keep your Mac awake — indefinitely or for a timed session — from the menu bar.</vee.desc>
 # <vee.dependencies>python3,caffeinate</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/caffeine.png</vee.image>
 #
 # <vee.exec>caffeinate,ps,pgrep,python3</vee.exec>
 # <vee.filesystem.write>$SWIFTBAR_PLUGIN_DATA_PATH (falls back to $SWIFTBAR_PLUGIN_CACHE_PATH, then $TMPDIR): vee-caffeine.state, vee-caffeine.log, vee-caffeine.state.lock/</vee.filesystem.write>

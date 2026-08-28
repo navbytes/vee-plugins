@@ -26,6 +26,7 @@
 # <vee.desc>PRs waiting on your review, your own open PRs, and unread notifications.</vee.desc>
 # <vee.dependencies>python3</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/github.png</vee.image>
 #
 # <vee.var>string(GITHUB_TOKEN=): Personal access token (needs "repo"/"notifications" read access). Not needed if the gh CLI is installed and logged in.</vee.var>
 #

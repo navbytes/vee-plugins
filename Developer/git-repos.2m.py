@@ -19,6 +19,7 @@
 # <vee.desc>Uncommitted/unpushed/clean status for every repo under GIT_ROOTS, with a searchable jump panel.</vee.desc>
 # <vee.dependencies>python3,git</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/git-repos.png</vee.image>
 #
 # <vee.var>string(GIT_ROOTS=~/repos): Colon-separated directories to scan for repos (2 levels deep).</vee.var>
 # <vee.var>string(GIT_EDITOR_CMD=): Command to open a repo in your editor, e.g. "code" or "subl". Leave blank to hide the menu item.</vee.var>

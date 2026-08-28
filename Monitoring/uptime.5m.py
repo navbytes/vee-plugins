@@ -30,6 +30,7 @@
 # <vee.desc>Parallel HTTP health checks for your own endpoints, in the menu bar and as a widget board.</vee.desc>
 # <vee.dependencies>python3,curl</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/uptime.png</vee.image>
 #
 # <vee.var>string(UPTIME_TARGETS=): Comma-separated Label=https://url checks, e.g. API=https://api.example.com/health,Docs=https://docs.example.com. Capped at 12.</vee.var>
 #

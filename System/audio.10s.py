@@ -54,6 +54,7 @@
 # <vee.desc>Output device, volume, and mute, with a live slider and toggle right in the menu.</vee.desc>
 # <vee.dependencies>python3,osascript,system_profiler</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
+# <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/audio.png</vee.image>
 #
 # Trust declarations (advisory, never enforced): both control rows can
 # change system volume/mute state when clicked, so `exec` is declared
