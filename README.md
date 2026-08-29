@@ -25,7 +25,6 @@ Or grab one file directly:
 
 ```sh
 cd ~/Library/Application\ Support/Vee/plugins
-vee sdk py --out .          # once per machine — see below
 curl -O https://raw.githubusercontent.com/navbytes/vee-plugins/main/System/system-vitals.10s.py
 # read it, then:
 chmod +x system-vitals.10s.py
@@ -34,20 +33,27 @@ chmod +x system-vitals.10s.py
 Plugins ship **non-executable on purpose** — you read the source, then you
 `chmod +x`. That is the deal this store is built around.
 
-### One-time setup: the SDK
+### The SDK
 
 Every plugin here builds its menu with Vee's own SDK rather than formatting text
-by hand, so the SDK has to sit beside them:
+by hand. **Vee 0.6.2 and later provide it when they run a plugin**, so there is
+nothing to install — a plugin from Discover, or one you curl into place, just
+runs.
+
+On **Vee 0.6.1 or earlier** the SDK had to sit beside the plugins, and without it
+a plugin failed with `ModuleNotFoundError: No module named 'vee'`. If you are on
+an older Vee, or you want to run a plugin with a bare `python3`/`node` outside
+Vee — an editor's Run button, a debugger — put a copy in the folder:
 
 ```sh
 vee sdk py --out ~/Library/Application\ Support/Vee/plugins   # all but one plugin
 vee sdk ts --out ~/Library/Application\ Support/Vee/plugins   # only for litellm-cost
 ```
 
-**Do this once per machine.** Vee's installer writes exactly one file, so
-installing from Discover does not bring the SDK with it — without it a plugin
-fails with an import error. Vee's plugin discovery skips `vee.py` / `vee.ts` by
-name, so they sit in the folder without being run as plugins.
+A copy beside a plugin always takes precedence over Vee's own, so adding one
+changes nothing about how the plugin behaves. Vee's plugin discovery skips
+`vee.py` / `vee.ts` by name, so they sit in the folder without being run as
+plugins.
 
 Why bother: the SDK owns quoting and escaping. Given a path containing a space
 it emits `param1="/Users/you/Library/Application Support/Vee/plugins/pomodoro.py"`

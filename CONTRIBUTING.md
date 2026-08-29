@@ -81,21 +81,27 @@ Prefer `JSONMenu` (the structured-JSON format). Reach for the text-protocol
 `Menu` when the plugin streams, or when it needs `font=` / `length=`, which the
 JSON format cannot express.
 
-### The SDK has to be beside the plugin
+### The SDK, and why it is still vendored here
 
-`vee.py` / `vee.ts` are vendored into each category folder here, and live beside
-your plugins at runtime:
+**Vee 0.6.2 and later provide the SDK when they run a plugin**, so a plugin
+installed from Discover needs nothing beside it. `vee.py` / `vee.ts` are still
+vendored into each category folder for two reasons: a plugin here has to run
+under older Vee versions too, and a vendored copy is what lets you run one
+directly — `python3 System/system-vitals.10s.py`, an editor's Run button, a
+debugger — without going through Vee at all.
+
+A copy beside a plugin always takes precedence over Vee's own, so the vendored
+files decide which SDK the plugins in this repository run against.
+
+For your own plugins folder, a copy is optional on 0.6.2+ and required below it:
 
 ```sh
 vee sdk py --out ~/Library/Application\ Support/Vee/plugins
 vee sdk ts --out ~/Library/Application\ Support/Vee/plugins   # only if you run a TS plugin
 ```
 
-**This is a one-time step per machine, and installing a plugin from Discover does
-not do it for you** — Vee's installer writes exactly one file. A plugin installed
-without the SDK present fails with an import error. Vee's own plugin discovery
-skips `vee.ts` / `vee.py` by name, so they sit in the plugins folder without ever
-being run as plugins.
+Vee's own plugin discovery skips `vee.ts` / `vee.py` by name, so they sit in the
+plugins folder without ever being run as plugins.
 
 Regenerate the repo's vendored copies (all category folders at once) with:
 
