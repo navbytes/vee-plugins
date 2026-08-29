@@ -209,7 +209,7 @@
       "summary": "Every control the Vee plugin format supports, in one file.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "7fc59d3448b456145b9e3fc27f10a1ba4a9046d3576a6461545adc98865e9d89",
+      "sha256": "74b0c0777e325cd0f1b137e6e2a96378953a8e0dcc3abce741fb1b583c783c45",
       "deprecated": false,
       "tags": [
         "showcase",
