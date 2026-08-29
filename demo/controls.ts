@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 //
-// controls-raw.ts — the exact same menu as controls-sdk.ts, hand-formatted
-// with no SDK: plain console.log() calls building the xbar/SwiftBar text
-// protocol by hand. Run both and diff their output — they are
-// byte-identical, in fact identical to the Python pair too.
+// controls.ts — every menu-row control Vee's plugin format supports, in one
+// file, printing the xbar/SwiftBar text protocol directly with plain
+// console.log() calls — no dependency. Byte-identical output to controls.py.
 //
-// The point of this file is what it costs to skip the SDK: every `|`-param
-// line below is `text | key=value key2=value2 …`, and YOU are responsible
-// for the two things vee.py/vee.ts normally do for free:
+// The point of this file is what a dependency-free plugin looks like: every
+// `|`-param line below is `text | key=value key2=value2 …`, and YOU are
+// responsible for two things:
 //
 //  1. Quote any param value containing whitespace, `|`, or `\` — see the
 //     `param1=` and `tooltip=` lines below. Miss one and the value silently
@@ -15,8 +14,8 @@
 //  2. Escape a literal `|` or `\` inside DISPLAY TEXT (not a param value) as
 //     `\|` / `\\`, or it's read as the params delimiter and corrupts the
 //     line — see "Reserved chars" below. This bit a hand-formatted plugin in
-//     this very repo before the SDK existed: `a|b` rendered as `a`, silently
-//     dropping `b and back\slash` as if it were parameters.
+//     this very repo once: `a|b` rendered as `a`, silently dropping `b and
+//     back\slash` as if it were parameters.
 //
 // This is a reference, not a utility: every row is a static example, nothing
 // reads real system state. The two interactive rows (toggle/slider) and the

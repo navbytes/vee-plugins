@@ -36,10 +36,6 @@ MIN_MACOS = "26.0"
 # plugin still carries <xbar.*>/<swiftbar.*> until it is converted.
 TAG_RE = re.compile(r"<(?:xbar|swiftbar|vee)\.([a-zA-Z.]+)>(.*?)</(?:xbar|swiftbar|vee)\.\1>", re.S)
 PLUGIN_RE = re.compile(r"^[\w.-]+\.(sh|py|ts|js|rb|pl|swift)$")
-# Vee's PluginDiscovery skips these by name (vendoredSDKFilenames) so the SDK can
-# sit beside plugins in the plugins folder without being run as one. The catalog
-# has to agree, or the SDK gets published as a plugin.
-VENDORED_SDK = {"vee.ts", "vee.py", "vee.go"}
 
 
 def read_tags(text: str) -> dict[str, str]:
@@ -92,10 +88,7 @@ def plugins() -> list[Path]:
         d = ROOT / category
         if not d.is_dir():
             continue
-        found += sorted(
-            p for p in d.iterdir()
-            if p.is_file() and PLUGIN_RE.match(p.name) and p.name.lower() not in VENDORED_SDK
-        )
+        found += sorted(p for p in d.iterdir() if p.is_file() and PLUGIN_RE.match(p.name))
     return found
 
 
@@ -112,6 +105,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="verify the manifest is current")
     args = ap.parse_args()
+
+    # Plugins are dependency-free executables — no SDK file may be committed.
+    if sdk_files := [p.relative_to(ROOT) for p in ROOT.rglob("*") if p.name in ("vee.py", "vee.ts") and ".claude" not in p.parts]:
+        print(f"SDK files may not be committed (plugins are dependency-free): {sdk_files}", file=sys.stderr)
+        return 1
 
     built = build()
     if not built["plugins"]:

@@ -33,34 +33,18 @@ chmod +x system-vitals.10s.py
 Plugins ship **non-executable on purpose** — you read the source, then you
 `chmod +x`. That is the deal this store is built around.
 
-### The SDK
+### No SDK
 
-Every plugin here builds its menu with Vee's own SDK rather than formatting text
-by hand. **Vee 0.6.2 and later provide it when they run a plugin**, so there is
-nothing to install — a plugin from Discover, or one you curl into place, just
-runs.
-
-On **Vee 0.6.1 or earlier** the SDK had to sit beside the plugins, and without it
-a plugin failed with `ModuleNotFoundError: No module named 'vee'`. If you are on
-an older Vee, or you want to run a plugin with a bare `python3`/`node` outside
-Vee — an editor's Run button, a debugger — put a copy in the folder:
-
-```sh
-vee sdk py --out ~/Library/Application\ Support/Vee/plugins   # all but one plugin
-vee sdk ts --out ~/Library/Application\ Support/Vee/plugins   # only for litellm-cost
-```
-
-A copy beside a plugin always takes precedence over Vee's own, so adding one
-changes nothing about how the plugin behaves. Vee's plugin discovery skips
-`vee.py` / `vee.ts` by name, so they sit in the folder without being run as
-plugins.
-
-Why bother: the SDK owns quoting and escaping. Given a path containing a space
-it emits `param1="/Users/you/Library/Application Support/Vee/plugins/pomodoro.py"`
-correctly quoted, and given `a|b` it emits `a\|b` — the exact corruption that
-silently broke rows here before. It also rejects unknown options at runtime, which
-caught a `submenu` being passed as a parameter and silently dropping an entire
-subtree.
+Every plugin here is a **dependency-free executable**: it prints Vee's stdout
+format (the `key=value` text protocol, or the [JSON output
+format](https://vee.navbytes.io/guide/json-output/)) directly — `python3
+System/system-vitals.10s.py` or `node Monitoring/litellm-cost.90s.ts` just
+runs, with nothing to install and nothing vendored beside it. A handful of
+plugins with a wider surface area (`caffeine.1m.py`, `pomodoro.py`,
+`controls.py`, `litellm-cost.90s.ts`) carry a small, file-local builder for
+the quoting/escaping rules the text protocol needs; see
+[`demo/`](demo/) for what building the format by hand looks like on a plugin
+that exercises every option.
 
 ## What's in it
 
@@ -101,12 +85,11 @@ subtree.
 ### Showcase
 
 The one deliberate exception to "useful more than once" — a reference, not a
-utility. See [`demo/`](demo/) for the full set: the same menu again with no
-SDK and in TypeScript, all four verified byte-identical.
+utility. See [`demo/`](demo/) for its TypeScript twin, verified byte-identical.
 
 | Plugin | Every | What it does |
 | --- | --- | --- |
-| [`controls.py`](Showcase/controls.py) | on demand | Every control the plugin format supports — sliders, toggles, progress bars, pie/donut/stacked-bar charts, SF Symbols, Markdown, submenus — in one file, built with the SDK. |
+| [`controls.py`](Showcase/controls.py) | on demand | Every control the plugin format supports — sliders, toggles, progress bars, pie/donut/stacked-bar charts, SF Symbols, Markdown, submenus — in one file. |
 
 Most of these have settings — open the plugin's Settings in Vee's Plugin Manager.
 `GIT_ROOTS`, `UPTIME_TARGETS`, `TIMEZONES`, and `PORT_RANGES` are the ones worth
@@ -114,7 +97,7 @@ setting first.
 
 ## The rules every plugin here follows
 
-1. **Nothing beyond what macOS ships**, plus the vendored SDK. `python3` and
+1. **Nothing beyond what macOS ships.** `python3` and
    `/usr/bin/*`; optional tools (`git`, `gh`, `docker`) are detected, never
    assumed. Two deliberate exceptions, both because the dependency buys
    something no shipped tool can: `clipboard.swift` needs the Xcode Command Line
