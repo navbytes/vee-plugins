@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "vee-catalog.json"
 
 # Category folders, in the order Discover should show them.
-CATEGORIES = ["System", "Developer", "Network", "Monitoring", "Productivity"]
+CATEGORIES = ["System", "Developer", "Network", "Monitoring", "Productivity", "Showcase"]
 
 STORE_NAME = "Vee Plugins by navbytes"
 HOMEPAGE = "https://github.com/navbytes/vee-plugins"

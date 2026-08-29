@@ -9,7 +9,7 @@ cd "$(dirname "$0")/.."
 VEE="${VEE:-vee}"
 command -v "$VEE" >/dev/null || { echo "vee not on PATH; set VEE=/path/to/vee" >&2; exit 1; }
 
-for dir in System Developer Network Monitoring Productivity demo; do
+for dir in System Developer Network Monitoring Productivity Showcase demo; do
   [ -d "$dir" ] || continue
   # A folder needs the Python SDK only if something in it imports vee.
   if grep -qlr '^from vee import\|^import vee' "$dir" 2>/dev/null; then

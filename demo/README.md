@@ -12,6 +12,11 @@ holds the rest of this store to. That's why it lives outside the category
 folders: `demo/` isn't in `scripts/build-catalog.py`'s `CATEGORIES`, so
 Discover never lists it and CI's manifest checks never touch it.
 
+One of the four, [`controls-sdk.py`](controls-sdk.py), is also catalogued —
+as [`../Showcase/controls.py`](../Showcase/controls.py), the one deliberate
+exception to the "useful more than once" bar, so there's a single way to find
+this from Discover. It's the same menu; come here for the other three.
+
 | File | SDK? | Language |
 | --- | --- | --- |
 | [`controls-sdk.py`](controls-sdk.py) | yes | Python |
