@@ -36,9 +36,10 @@ Plugins ship **non-executable on purpose** — you read the source, then you
 ### The SDK
 
 Every plugin here builds its menu with Vee's own SDK rather than formatting text
-by hand. **Vee 0.6.2 and later provide it when they run a plugin**, so there is
-nothing to install — a plugin from Discover, or one you curl into place, just
-runs.
+by hand — every one but `clipboard.swift`, which is Swift, a language the SDK
+does not cover, so it formats its own output. **Vee 0.6.2 and later provide the
+SDK when they run a plugin**, so there is nothing to install — a plugin from
+Discover, or one you curl into place, just runs.
 
 On **Vee 0.6.1 or earlier** the SDK had to sit beside the plugins, and without it
 a plugin failed with `ModuleNotFoundError: No module named 'vee'`. If you are on
@@ -46,8 +47,9 @@ an older Vee, or you want to run a plugin with a bare `python3`/`node` outside
 Vee — an editor's Run button, a debugger — put a copy in the folder:
 
 ```sh
-vee sdk py --out ~/Library/Application\ Support/Vee/plugins   # all but one plugin
+vee sdk py --out ~/Library/Application\ Support/Vee/plugins   # the twelve Python plugins
 vee sdk ts --out ~/Library/Application\ Support/Vee/plugins   # only for litellm-cost
+# clipboard.swift needs neither — no Swift SDK exists, so it formats its own output
 ```
 
 A copy beside a plugin always takes precedence over Vee's own, so adding one
