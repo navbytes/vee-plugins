@@ -62,7 +62,7 @@ jobs:
       - name: Plugins import the vendored SDK, never npm
         run: |
           if grep -rn '"@navbytes/vee"' System Developer Network Monitoring Productivity 2>/dev/null; then
-            echo "::error::import the vendored ./vee.ts — @navbytes/vee does not resolve in the plugins folder"; exit 1
+            echo "::error::import the vendored ./vee.ts, not @navbytes/vee — a bare specifier needs Vee 0.6.2+, and plugins here must run on older versions too"; exit 1
           fi
           echo "no npm specifiers"
 
