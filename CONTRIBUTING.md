@@ -10,7 +10,11 @@ what it touches.
 A plugin is accepted when all of these hold:
 
 1. **It is useful more than once.** Something you would actually leave in your
-   menu bar, not a format demo.
+   menu bar, not a format demo. There is exactly one exception in the store,
+   `Showcase/controls.py`: every control the plugin format supports, in one
+   file, so Discover has a single way to browse them. Kept singular on
+   purpose — a second one goes in [`demo/`](demo/), which Discover never
+   lists.
 2. **No dependencies beyond what macOS ships.** bash/zsh, `/usr/bin/*`, and
    `python3`. Wrapping an optional tool (`git`, `docker`, `gh`) is fine — it must
    detect the tool's absence and say so in a row. There is exactly one exception

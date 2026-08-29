@@ -201,6 +201,20 @@
       "tags": [
         "productivity"
       ]
+    },
+    {
+      "path": "Showcase/controls.py",
+      "title": "Controls Demo",
+      "category": "Showcase",
+      "summary": "Every control the Vee plugin format supports, in one file.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "57115f0e4d5bac8bbc357c884bf06d7484ab26acf4fb0075bb9f848e6aa4b80f",
+      "deprecated": false,
+      "tags": [
+        "showcase",
+        "searchable"
+      ]
     }
   ]
 }

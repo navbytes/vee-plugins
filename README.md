@@ -6,7 +6,7 @@ macOS menu-bar script runner.
 Vee ships pointing at the public `xbar-plugins` catalog. That catalog is large,
 old, and mostly unreviewed — plugins run un-sandboxed with your full user
 privileges, and a lot of what is in there has not been touched in years or no
-longer works on current macOS. This store is the opposite trade: **fourteen
+longer works on current macOS. This store is the opposite trade: **fifteen
 plugins, all read, all current, all declaring exactly what they touch.**
 
 ## Add it to Vee
@@ -98,6 +98,16 @@ subtree.
 | [`worldclock.1m.py`](Productivity/worldclock.1m.py) | 1m | Your team's timezones with a green/yellow/grey "can I message them right now" indicator, a meeting-overlap planner, and click-to-copy ISO timestamps. |
 | [`clipboard.swift`](Productivity/clipboard.swift) | streams | Clipboard history with **full-text search over every entry** (⌘⌃V from anywhere), pins, and ⌥ to pin/unpin in place. Skips anything a password manager marks concealed, and honours macOS 15.4's pasteboard-privacy gate instead of nagging you. **Needs the Xcode Command Line Tools.** |
 
+### Showcase
+
+The one deliberate exception to "useful more than once" — a reference, not a
+utility. See [`demo/`](demo/) for the full set: the same menu again with no
+SDK and in TypeScript, all four verified byte-identical.
+
+| Plugin | Every | What it does |
+| --- | --- | --- |
+| [`controls.py`](Showcase/controls.py) | on demand | Every control the plugin format supports — sliders, toggles, progress bars, pie/donut/stacked-bar charts, SF Symbols, Markdown, submenus — in one file, built with the SDK. |
+
 Most of these have settings — open the plugin's Settings in Vee's Plugin Manager.
 `GIT_ROOTS`, `UPTIME_TARGETS`, `TIMEZONES`, and `PORT_RANGES` are the ones worth
 setting first.
@@ -176,7 +186,9 @@ with an executable bit.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). The bar is "useful more than once,
 readable, honest, and bounded" — a plugin that only demonstrates a format
-feature belongs in Vee's own `plugins/showcase/`, not here.
+feature belongs in Vee's own `plugins/showcase/`, not here. `Showcase/controls.py`
+is the one deliberate exception, kept singular on purpose; anything more
+belongs in [`demo/`](demo/) instead, which Discover never lists.
 
 ## Security
 

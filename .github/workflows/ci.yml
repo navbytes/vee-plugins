@@ -40,7 +40,7 @@ jobs:
       - name: Vendored SDK present wherever it is imported
         run: |
           fail=0
-          for dir in System Developer Network Monitoring Productivity; do
+          for dir in System Developer Network Monitoring Productivity Showcase; do
             [ -d "$dir" ] || continue
             if ls "$dir"/*.py >/dev/null 2>&1 && grep -lqE '^from vee import|^import vee' "$dir"/*.py 2>/dev/null; then
               [ -f "$dir/vee.py" ] || { echo "::error::$dir imports vee but has no vee.py"; fail=1; }
@@ -61,7 +61,7 @@ jobs:
 
       - name: Plugins import the vendored SDK, never npm
         run: |
-          if grep -rn '"@navbytes/vee"' System Developer Network Monitoring Productivity 2>/dev/null; then
+          if grep -rn '"@navbytes/vee"' System Developer Network Monitoring Productivity Showcase 2>/dev/null; then
             echo "::error::import the vendored ./vee.ts, not @navbytes/vee — a bare specifier needs Vee 0.6.2+, and plugins here must run on older versions too"; exit 1
           fi
           echo "no npm specifiers"
@@ -117,7 +117,7 @@ jobs:
       # copied one, and it only stays true if something checks.
       - name: Headers use the <vee.*> namespace
         run: |
-          if grep -rlE '<(/?)(xbar|swiftbar)\.' System Developer Network Monitoring Productivity; then
+          if grep -rlE '<(/?)(xbar|swiftbar)\.' System Developer Network Monitoring Productivity Showcase; then
             echo "::error::plugin headers must use <vee.*>, not <xbar.*>/<swiftbar.*>"; exit 1
           fi
           echo "all plugin headers use <vee.*>"
