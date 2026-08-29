@@ -60,7 +60,10 @@ A plugin is accepted when all of these hold:
 ## Build the menu with the SDK
 
 Every plugin here builds its output with Vee's own SDK rather than formatting
-lines by hand:
+lines by hand. The exception is `clipboard.swift`: there is no Swift SDK, so it
+formats its own output and does the quoting itself. If you write a Swift plugin,
+you are in the same position — and the escaping rules below are yours to get
+right rather than the SDK's.
 
 ```python
 from vee import JSONMenu          # or Menu, for the text protocol
