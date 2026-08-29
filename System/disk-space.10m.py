@@ -39,8 +39,8 @@ import time
 
 
 class JSONSection:
-    """A dropdown section — see docs/_content/json-output.md. No SDK: this
-    plugin builds the JSON output format directly."""
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
 
     def __init__(self, items):
         self._items = items

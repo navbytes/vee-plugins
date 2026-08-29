@@ -5,9 +5,9 @@
 # This is Vee's STREAMING plugin showcase: no filename interval, marked
 # <vee.type>streamable</vee.type>, and it stays running forever,
 # pushing a full menu render between `~~~` separators once a second instead
-# of being re-run on a timer. It uses the SDK's text-protocol `Menu` builder
-# (not `JSONMenu`) because a streaming loop reads far more clearly as plain
-# renders, and lets the SDK escape the one literal `|` it prints as `\|`.
+# of being re-run on a timer. It uses the file-local text-protocol `Menu`
+# builder below (not JSON) because a streaming loop reads far more clearly
+# as plain renders, and it escapes the one literal `|` it prints as `\|`.
 #
 # All state (phase, when the phase ends, today's tally) lives in one file
 # under $SWIFTBAR_PLUGIN_CACHE_PATH — every run is normally a fresh process,
@@ -50,11 +50,11 @@ import time
 from urllib.parse import quote
 
 
-# --- Minimal text-protocol builder (no SDK) ----------------------------------
+# --- Minimal text-protocol builder ------------------------------------------
 # Vee's xbar/SwiftBar-compatible text format: `text | key=value key2=value2`.
-# Escaping/quoting rules mirror docs/_content/plugin-authoring.md — a literal
-# `|`/`\` in display text is escaped, and a param value containing whitespace,
-# `|`, or `\` is quoted.
+# Escaping/quoting rules mirror https://vee.navbytes.io/guide/plugin-authoring/
+# — a literal `|`/`\` in display text is escaped, and a param value
+# containing whitespace, `|`, or `\` is quoted.
 _QUOTE_FORCING = frozenset(
     "\t\n\v\f\r \u00a0\u1680\u2028\u2029\u202f\u205f\u3000\ufeff|\\"
 ) | frozenset(chr(c) for c in range(0x2000, 0x200B))
@@ -116,10 +116,6 @@ class Section:
         self._lines.append("-" * (self._depth * 2) + "---")
         return self
 
-    def submenu(self, text, **opts):
-        self.item(text, **opts)
-        return Section(self._lines, self._depth + 1)
-
 
 class Menu:
     def __init__(self):
@@ -139,9 +135,6 @@ class Menu:
         if self._body:
             return f"{head}\n---\n" + "\n".join(self._body)
         return head
-
-    def print(self):
-        sys.stdout.write(self.to_string() + "\n")
 
 
 # ---------------------------------------------------------------------------
@@ -314,7 +307,7 @@ def fmt_mmss(secs):
 
 
 def notify(title, body):
-    """vee://notify — see ~/repos/vee/docs/_content/cli-and-urls.md#the-notify-action.
+    """vee://notify — see https://vee.navbytes.io/guide/cli-and-urls/#the-notify-action.
     `plugin=` makes the alert actionable (Re-run/Silence/Open Log) and
     coalesces repeats instead of stacking."""
     plugin_id = os.environ.get("VEE_PLUGIN_ID", "")
@@ -357,7 +350,7 @@ def render(state, now):
 
     fmin, bmin = state["focus_sec"] // 60, state["break_sec"] // 60
     if fmin + bmin > 0:
-        # A literal `|` in display text is escaped by the SDK as `\|`.
+        # A literal `|` in display text is escaped as `\|` by `_escape_text`.
         d.item(f"Today: {fmin}m focus | {bmin}m break",
                chart={"kind": "stackedbar", "values": [fmin, bmin],
                       "labels": ["Focus", "Break"], "colors": ["orange", "green"]},

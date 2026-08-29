@@ -23,11 +23,11 @@
 // a harmless stand-in for a real command. href/webview only ever open this
 // project's own GitHub page.
 //
-// <vee.title>Controls Demo (no SDK)</vee.title>
+// <vee.title>Controls Demo</vee.title>
 // <vee.version>1.0</vee.version>
 // <vee.author>Naveen Kumar</vee.author>
 // <vee.author.github>navbytes</vee.author.github>
-// <vee.desc>Every control the Vee plugin format supports, hand-formatted with no SDK.</vee.desc>
+// <vee.desc>Every control the Vee plugin format supports, hand-formatted, dependency-free.</vee.desc>
 // <vee.dependencies>Node 24+ (runs the .ts file directly via native TypeScript type-stripping)</vee.dependencies>
 // <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 // <vee.filter>true</vee.filter>
@@ -46,7 +46,7 @@ const DOCS_URL = "https://github.com/navbytes/vee-plugins";
 
 // --- Title (before the first "---"): Vee cycles/stacks multiple title lines.
 console.log("Controls Demo | color=blue sfimage=slider.horizontal.3");
-console.log("SDK | color=gray size=11");
+console.log("Demo | color=gray size=11");
 console.log("---");
 
 // ---------------------------------------------------------------------------
@@ -74,7 +74,7 @@ console.log(`Open the docs | href=${DOCS_URL}`);
 // param1= and tooltip= both contain spaces, so both need quotes. A value's
 // own double quotes would need \" — none do here.
 console.log(
-  'Run a harmless command | shell=/bin/echo param1="hello from the SDK demo" ' +
+  'Run a harmless command | shell=/bin/echo param1="hello from the controls demo" ' +
     'terminal=false tooltip="Runs /bin/echo in the background; output goes nowhere"'
 );
 console.log("Refresh this menu | refresh=true");

@@ -37,8 +37,8 @@ import subprocess
 
 
 class JSONSection:
-    """A dropdown section — see docs/_content/json-output.md. No SDK: this
-    plugin builds the JSON output format directly."""
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
 
     def __init__(self, items):
         self._items = items
@@ -78,7 +78,7 @@ class JSONMenu:
 
 
 class WidgetCard(dict):
-    """The VEE_TARGET=widget stdout payload — docs/design/widget-surface-contract.md §4."""
+    """The VEE_TARGET=widget stdout payload — https://vee.navbytes.io/guide/widgets/#the-card."""
 
     def print(self):
         print(json.dumps(self, ensure_ascii=False))
@@ -294,8 +294,8 @@ d.separator()
 d.item("Health", header=True)
 d.item(f"Cycle count: {cycle_count}")
 # Drop the None color the "Condition" row gets when everything is Normal —
-# a stray null color is harmless but noisier than leaving it out (the SDK
-# already omits a None-valued option, so this is just for readability).
+# a stray null color is harmless but noisier than leaving it out (JSONSection
+# .item already omits a None-valued option, so this is just for readability).
 d.item(f"Condition: {condition}", color="orange" if condition not in ("Normal", "n/a") else None)
 
 if max_capacity:

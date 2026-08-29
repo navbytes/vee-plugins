@@ -32,7 +32,7 @@ from datetime import datetime
 
 # --- Minimal text-protocol builder (no SDK) ----------------------------------
 # Vee's xbar/SwiftBar-compatible text format: `text | key=value key2=value2`.
-# Escaping/quoting rules mirror docs/_content/plugin-authoring.md — a literal
+# Escaping/quoting rules mirror https://vee.navbytes.io/guide/plugin-authoring/ — a literal
 # `|`/`\` in display text is escaped, and a param value containing whitespace,
 # `|`, or `\` is quoted.
 _QUOTE_FORCING = frozenset(

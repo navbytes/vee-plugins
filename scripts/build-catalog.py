@@ -107,7 +107,15 @@ def main() -> int:
     args = ap.parse_args()
 
     # Plugins are dependency-free executables — no SDK file may be committed.
-    if sdk_files := [p.relative_to(ROOT) for p in ROOT.rglob("*") if p.name in ("vee.py", "vee.ts") and ".claude" not in p.parts]:
+    # Scoped to the category dirs + demo/, not the whole repo (that would
+    # also walk .git and .claude/worktrees/, which can legitimately hold one).
+    sdk_search_dirs = [ROOT / c for c in CATEGORIES] + [ROOT / "demo"]
+    if sdk_files := [
+        p.relative_to(ROOT)
+        for d in sdk_search_dirs
+        for p in d.rglob("*")
+        if p.name in ("vee.py", "vee.ts")
+    ]:
         print(f"SDK files may not be committed (plugins are dependency-free): {sdk_files}", file=sys.stderr)
         return 1
 

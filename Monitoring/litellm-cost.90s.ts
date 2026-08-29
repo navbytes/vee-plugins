@@ -49,8 +49,9 @@ type Color = string;
 type WidgetStatus = "ok" | "warning" | "error";
 
 // The subset of Vee's xbar/SwiftBar text-protocol item options this plugin
-// actually uses — see docs/_content/json-output.md and plugin-authoring.md
-// for the full parameter reference.
+// actually uses — see https://vee.navbytes.io/guide/json-output/ and
+// https://vee.navbytes.io/guide/plugin-authoring/ for the full parameter
+// reference.
 interface ItemOptions {
   color?: Color;
   size?: number;
@@ -170,7 +171,7 @@ class Menu {
   }
 }
 
-// The VEE_TARGET=widget stdout payload — docs/design/widget-surface-contract.md §4.
+// The VEE_TARGET=widget stdout payload — https://vee.navbytes.io/guide/widgets/#the-card.
 interface WidgetCardOptions {
   title?: string;
   symbol?: string;

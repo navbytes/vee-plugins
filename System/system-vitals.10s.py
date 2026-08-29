@@ -46,8 +46,8 @@ import subprocess
 
 
 class JSONSection:
-    """A dropdown section — see docs/_content/json-output.md. No SDK: this
-    plugin builds the JSON output format directly."""
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
 
     def __init__(self, items):
         self._items = items
@@ -87,7 +87,7 @@ class JSONMenu:
 
 
 class WidgetCard(dict):
-    """The VEE_TARGET=widget stdout payload — docs/design/widget-surface-contract.md §4."""
+    """The VEE_TARGET=widget stdout payload — https://vee.navbytes.io/guide/widgets/#the-card."""
 
     def print(self):
         print(json.dumps(self, ensure_ascii=False))

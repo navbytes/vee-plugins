@@ -41,7 +41,7 @@ format](https://vee.navbytes.io/guide/json-output/)) directly — `python3
 System/system-vitals.10s.py` or `node Monitoring/litellm-cost.90s.ts` just
 runs, with nothing to install and nothing vendored beside it. A handful of
 plugins with a wider surface area (`caffeine.1m.py`, `pomodoro.py`,
-`controls.py`, `litellm-cost.90s.ts`) carry a small, file-local builder for
+`litellm-cost.90s.ts`) carry a small, file-local builder for
 the quoting/escaping rules the text protocol needs; see
 [`demo/`](demo/) for what building the format by hand looks like on a plugin
 that exercises every option.

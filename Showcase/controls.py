@@ -40,7 +40,7 @@ DOCS_URL = "https://github.com/navbytes/vee-plugins"
 
 # --- Title (before the first "---"): Vee cycles/stacks multiple title lines.
 print("Controls Demo | color=blue sfimage=slider.horizontal.3")
-print("SDK | color=gray size=11")
+print("Demo | color=gray size=11")
 print("---")
 
 # ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@ print(f"Open the docs | href={DOCS_URL}")
 # param1= and tooltip= both contain spaces, so both need quotes. A value's
 # own double quotes would need \" — none do here.
 print(
-    'Run a harmless command | shell=/bin/echo param1="hello from the SDK demo" '
+    'Run a harmless command | shell=/bin/echo param1="hello from the controls demo" '
     'terminal=false tooltip="Runs /bin/echo in the background; output goes nowhere"'
 )
 print("Refresh this menu | refresh=true")
