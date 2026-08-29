@@ -34,12 +34,53 @@
 # <vee.exec>pbcopy,sh</vee.exec>
 # <vee.filesystem.read>/usr/share/zoneinfo</vee.filesystem.read>
 
+import json
 import os
 import sys
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from vee import JSONMenu
+
+class JSONSection:
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+    def submenu(self, text, **opts):
+        children = []
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}, "submenu": children})
+        return JSONSection(children)
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
 
 ZONEINFO_DIR = "/usr/share/zoneinfo"
 TIMEZONES = os.environ.get(

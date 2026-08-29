@@ -61,64 +61,26 @@ A plugin is accepted when all of these hold:
     are Vee-native — use those where they exist.
 11. **`vee lint` is clean.**
 
-## Build the menu with the SDK
+## Build the menu directly — no SDK
 
-Every plugin here builds its output with Vee's own SDK rather than formatting
-lines by hand. The exception is `clipboard.swift`: there is no Swift SDK, so it
-formats its own output and does the quoting itself. If you write a Swift plugin,
-you are in the same position — and the escaping rules below are yours to get
-right rather than the SDK's.
+Every plugin here is a **dependency-free executable**: it prints the
+`key=value` xbar/SwiftBar text protocol, or Vee's
+[JSON output format](https://vee.navbytes.io/guide/json-output/), straight to
+stdout — `print()`/`console.log()` (text protocol) or
+`json.dumps()`/`JSON.stringify()` (JSON), no imports beyond the standard
+library. `python3 System/system-vitals.10s.py` or `node
+Monitoring/litellm-cost.90s.ts` just runs, unmodified, outside Vee too — an
+editor's Run button, a debugger.
 
-```python
-from vee import JSONMenu          # or Menu, for the text protocol
-```
-```ts
-import { Menu, Gauge } from "./vee.ts";
-```
-
-This is not stylistic. The SDK owns quoting, escaping and number formatting —
-`item("a|b and back\slash")` emits `a\|b and back\\slash`, which is exactly the
-corruption that silently broke rows in a hand-formatted plugin in this repo. It
-also **rejects unknown options at runtime with a did-you-mean**, so a typo'd or
-misused parameter fails loudly instead of rendering nothing at all. Converting
-this store surfaced a real bug that way: a `submenu=[…]` passed as an option
-rather than through `.submenu()` had been silently dropping a whole subtree.
-
-Prefer `JSONMenu` (the structured-JSON format). Reach for the text-protocol
-`Menu` when the plugin streams, or when it needs `font=` / `length=`, which the
-JSON format cannot express.
-
-### The SDK, and why it is still vendored here
-
-**Vee 0.6.2 and later provide the SDK when they run a plugin**, so a plugin
-installed from Discover needs nothing beside it. `vee.py` / `vee.ts` are still
-vendored into each category folder for two reasons: a plugin here has to run
-under older Vee versions too, and a vendored copy is what lets you run one
-directly — `python3 System/system-vitals.10s.py`, an editor's Run button, a
-debugger — without going through Vee at all.
-
-A copy beside a plugin always takes precedence over Vee's own, so the vendored
-files decide which SDK the plugins in this repository run against.
-
-For your own plugins folder, a copy is optional on 0.6.2+ and required below it:
-
-```sh
-vee sdk py --out ~/Library/Application\ Support/Vee/plugins
-vee sdk ts --out ~/Library/Application\ Support/Vee/plugins   # only if you run a TS plugin
-```
-
-Vee's own plugin discovery skips `vee.ts` / `vee.py` by name, so they sit in the
-plugins folder without ever being run as plugins.
-
-Regenerate the repo's vendored copies (all category folders at once) with:
-
-```sh
-scripts/sync-sdk.sh
-```
-
-Never hand-edit a vendored `vee.py` / `vee.ts`, and never import
-`@navbytes/vee` from npm — that specifier does not resolve in the plugins
-folder, which is the only place it has to.
+Prefer the JSON output format for a new plugin — no quoting or escaping games.
+Reach for the text protocol when the plugin streams, or needs `font=` /
+`length=`, which JSON cannot express; in that case a param value containing
+whitespace, `|`, or `\` needs manual quoting, and a literal `|` or `\` in
+display text needs escaping as `\|` / `\\`, or Vee's parser reads it as the
+params delimiter — see [`demo/`](demo/) for what this costs on a plugin that
+exercises every option in the format. **No SDK file (`vee.py`/`vee.ts`) may be
+committed to this repo** — `scripts/build-catalog.py` rejects one if it finds
+one.
 
 ## The loop
 

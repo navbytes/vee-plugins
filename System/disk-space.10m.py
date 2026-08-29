@@ -32,11 +32,52 @@
 # <vee.exec>df,du,open</vee.exec>
 # <vee.filesystem.read>~ (top-level folder sizes only)</vee.filesystem.read>
 
+import json
 import os
 import subprocess
 import time
 
-from vee import JSONMenu
+
+class JSONSection:
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+    def submenu(self, text, **opts):
+        children = []
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}, "submenu": children})
+        return JSONSection(children)
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
 
 WARN = float(os.environ.get("DISK_WARN", "85"))
 INCLUDE_PREFIXES = [p.strip() for p in os.environ.get("DISK_INCLUDE", "").split(",") if p.strip()]
@@ -137,8 +178,8 @@ for mount, label, size_kb, used_kb, avail_kb, pct in volumes:
         f"{label}: {human_gb(used_kb)} / {human_gb(size_kb)} ({pct}%)",
         color=color,
         progress=max(0.0, min(pct / 100.0, 1.0)),
-        accessory_width=130,
-        accessory_height=8,
+        accessoryWidth=130,
+        accessoryHeight=8,
     )
 
 if boot:
@@ -155,8 +196,8 @@ if boot:
             "labels": ["Used", "Free"],
             "colors": ["orange", "#3C4046"],
         },
-        accessory_width=60,
-        accessory_height=60,
+        accessoryWidth=60,
+        accessoryHeight=60,
     )
 
 d.separator()

@@ -17,14 +17,10 @@
 // not choose. The last good response is cached, so a transient outage shows
 // a "stale" banner instead of a blank menu.
 //
-// Ships with `vee.ts` beside it — Vee's TypeScript SDK, vendored here with
-// `vee sdk ts --out .` rather than imported as a package: a plugin has no
-// build step and can't resolve `node_modules`, and Vee's own plugin scanner
-// already knows to treat `vee.ts`/`vee.py` as SDK files, not plugins, when it
-// walks the plugins folder. Regenerate with the same command if the SDK
-// changes; every menu line below goes through its builders rather than
-// hand-formatted `key=value` strings, so the escaping is the SDK's, not
-// hand-rolled.
+// Dependency-free: builds the xbar/SwiftBar text protocol and the widget-card
+// JSON directly (see the small Menu/Section/WidgetCard helpers below), rather
+// than importing an SDK — a plugin has no build step and can't resolve
+// `node_modules`.
 //
 // <vee.title>LiteLLM Cost</vee.title>
 // <vee.surface>both</vee.surface>
@@ -49,7 +45,188 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { realpathSync } from "node:fs";
 
-import { Menu, Gauge, Stat, type Color, type ItemOptions, type Section, type WidgetStatus } from "./vee.ts";
+type Color = string;
+type WidgetStatus = "ok" | "warning" | "error";
+
+// The subset of Vee's xbar/SwiftBar text-protocol item options this plugin
+// actually uses — see https://vee.navbytes.io/guide/json-output/ and
+// https://vee.navbytes.io/guide/plugin-authoring/ for the full parameter
+// reference.
+interface ItemOptions {
+  color?: Color;
+  size?: number;
+  font?: string;
+  href?: string;
+  refresh?: boolean;
+  disabled?: boolean;
+  tooltip?: string;
+  sfimage?: string;
+  sfColor?: Color;
+  progress?: number | { value: number; max: number };
+  progressTrackColor?: Color;
+  progressW?: number | "full";
+  progressH?: number;
+  chart?: {
+    kind: "pie" | "donut" | "stackedbar";
+    values: number[];
+    labels?: string[];
+    colors?: Color[];
+    w?: number | "full";
+    h?: number;
+  };
+}
+
+// Vee's parser reads `\|`, `\n`, `\\` as escapes; a param value containing
+// whitespace, `|`, or `\` must be quoted. No SDK: this plugin builds the
+// xbar/SwiftBar text protocol directly.
+function escapeText(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n/g, "\\n");
+}
+
+const NEEDS_QUOTE = /[\s|\\]/;
+
+function quote(value: string): string {
+  const escaped = escapeText(value);
+  if (NEEDS_QUOTE.test(value) || value.startsWith('"') || value.startsWith("'")) {
+    return `"${escaped.replace(/"/g, '\\"')}"`;
+  }
+  return escaped;
+}
+
+function encode(options?: ItemOptions): string {
+  if (!options) return "";
+  const parts: string[] = [];
+  const push = (key: string, value: unknown) => {
+    if (value !== undefined && value !== null) parts.push(`${key}=${quote(String(value))}`);
+  };
+  push("color", options.color);
+  push("size", options.size);
+  push("font", options.font);
+  push("href", options.href);
+  push("refresh", options.refresh);
+  push("disabled", options.disabled);
+  push("tooltip", options.tooltip);
+  push("sfimage", options.sfimage);
+  push("sfcolor", options.sfColor);
+  if (options.progress !== undefined) {
+    const p = options.progress;
+    push("progress", typeof p === "number" ? String(p) : `${p.value},${p.max}`);
+  }
+  push("progresstrackcolor", options.progressTrackColor);
+  if (options.chart !== undefined) {
+    const c = options.chart;
+    push(c.kind, c.values.map(String).join(","));
+    if (c.labels !== undefined) push("chartlabels", c.labels.join(","));
+    if (c.colors !== undefined) push("chartcolors", c.colors.join(","));
+  }
+  push("accessoryw", options.progressW ?? options.chart?.w);
+  push("accessoryh", options.progressH ?? options.chart?.h);
+  return parts.length ? " | " + parts.join(" ") : "";
+}
+
+class Section {
+  private readonly lines: string[];
+  private readonly depth: number;
+
+  constructor(lines: string[], depth = 0) {
+    this.lines = lines;
+    this.depth = depth;
+  }
+
+  private prefix(): string {
+    return "-".repeat(this.depth * 2);
+  }
+
+  item(text: string, options?: ItemOptions): this {
+    this.lines.push(this.prefix() + escapeText(text) + encode(options));
+    return this;
+  }
+
+  separator(): this {
+    this.lines.push(this.prefix() + "---");
+    return this;
+  }
+}
+
+class Menu {
+  private readonly titles: string[] = [];
+  private readonly body: string[] = [];
+
+  title(text: string, options?: ItemOptions): this {
+    this.titles.push(escapeText(text) + encode(options));
+    return this;
+  }
+
+  get dropdown(): Section {
+    return new Section(this.body);
+  }
+
+  toString(): string {
+    const head = this.titles.join("\n");
+    return this.body.length ? `${head}\n---\n${this.body.join("\n")}` : head;
+  }
+
+  print(): void {
+    process.stdout.write(this.toString() + "\n");
+  }
+}
+
+// The VEE_TARGET=widget stdout payload — https://vee.navbytes.io/guide/widgets/#the-card.
+interface WidgetCardOptions {
+  title?: string;
+  symbol?: string;
+  tint?: Color;
+  value?: string;
+  caption?: string;
+  detail?: string;
+  status?: WidgetStatus;
+  progress?: number;
+  trend?: number[];
+  actions?: { kind: "refresh" | "href" | "shortcut"; label: string; url?: string }[];
+  refreshAfter?: number;
+}
+
+class WidgetCard {
+  private readonly template: "stat" | "gauge";
+  private readonly options: WidgetCardOptions;
+
+  constructor(template: "stat" | "gauge", options: WidgetCardOptions) {
+    this.template = template;
+    this.options = options;
+  }
+
+  toString(): string {
+    const o = this.options;
+    const payload: Record<string, unknown> = { vee_widget: 1, template: this.template };
+    const push = (key: string, value: unknown) => {
+      if (value !== undefined) payload[key] = value;
+    };
+    push("title", o.title);
+    push("symbol", o.symbol);
+    push("tint", o.tint);
+    push("value", o.value);
+    push("caption", o.caption);
+    push("detail", o.detail);
+    push("status", o.status);
+    push("progress", o.progress);
+    push("trend", o.trend);
+    push("actions", o.actions);
+    push("refresh_after", o.refreshAfter);
+    return JSON.stringify(payload);
+  }
+
+  print(): void {
+    process.stdout.write(this.toString() + "\n");
+  }
+}
+
+function Stat(options: WidgetCardOptions): WidgetCard {
+  return new WidgetCard("stat", options);
+}
+
+function Gauge(options: WidgetCardOptions): WidgetCard {
+  return new WidgetCard("gauge", options);
+}
 
 const COLORS = {
   green: "#36C26E",

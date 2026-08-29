@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 #
-# controls-raw.py — the exact same menu as controls-sdk.py, hand-formatted
-# with no SDK: plain print() calls building the xbar/SwiftBar text protocol
-# by hand. Run both and diff their output — they are byte-identical.
+# controls.py — every menu-row control Vee's plugin format supports, in one
+# file, printing the xbar/SwiftBar text protocol directly with plain print()
+# calls — no dependency. The same menu, catalogued, lives at
+# ../Showcase/controls.py; the two are verified byte-identical.
 #
-# The point of this file is what it costs to skip the SDK: every `|`-param
-# line below is `text | key=value key2=value2 …`, and YOU are responsible
-# for the two things vee.py/vee.ts normally do for free:
+# The point of this file is what a dependency-free plugin looks like: every
+# `|`-param line below is `text | key=value key2=value2 …`, and YOU are
+# responsible for two things:
 #
 #  1. Quote any param value containing whitespace, `|`, or `\` — see the
 #     `param1=` and `tooltip=` lines below. Miss one and the value silently
@@ -14,8 +15,8 @@
 #  2. Escape a literal `|` or `\` inside DISPLAY TEXT (not a param value) as
 #     `\|` / `\\`, or it's read as the params delimiter and corrupts the
 #     line — see "Reserved chars" below. This bit a hand-formatted plugin in
-#     this very repo before the SDK existed: `a|b` rendered as `a`, silently
-#     dropping `b and back\slash` as if it were parameters.
+#     this very repo once: `a|b` rendered as `a`, silently dropping `b and
+#     back\slash` as if it were parameters.
 #
 # This is a reference, not a utility: every row is a static example, nothing
 # reads real system state. The two interactive rows (toggle/slider) and the
@@ -23,11 +24,11 @@
 # a harmless stand-in for a real command. href/webview only ever open this
 # project's own GitHub page.
 #
-# <vee.title>Controls Demo (no SDK)</vee.title>
+# <vee.title>Controls Demo</vee.title>
 # <vee.version>1.0</vee.version>
 # <vee.author>Naveen Kumar</vee.author>
 # <vee.author.github>navbytes</vee.author.github>
-# <vee.desc>Every control the Vee plugin format supports, hand-formatted with no SDK.</vee.desc>
+# <vee.desc>Every control the Vee plugin format supports, hand-formatted, dependency-free.</vee.desc>
 # <vee.dependencies>python3</vee.dependencies>
 # <vee.abouturl>https://github.com/navbytes/vee-plugins</vee.abouturl>
 # <vee.filter>true</vee.filter>
@@ -47,7 +48,7 @@ DOCS_URL = "https://github.com/navbytes/vee-plugins"
 
 # --- Title (before the first "---"): Vee cycles/stacks multiple title lines.
 print("Controls Demo | color=blue sfimage=slider.horizontal.3")
-print("SDK | color=gray size=11")
+print("Demo | color=gray size=11")
 print("---")
 
 # ---------------------------------------------------------------------------
@@ -75,7 +76,7 @@ print(f"Open the docs | href={DOCS_URL}")
 # param1= and tooltip= both contain spaces, so both need quotes. A value's
 # own double quotes would need \" — none do here.
 print(
-    'Run a harmless command | shell=/bin/echo param1="hello from the SDK demo" '
+    'Run a harmless command | shell=/bin/echo param1="hello from the controls demo" '
     'terminal=false tooltip="Runs /bin/echo in the background; output goes nowhere"'
 )
 print("Refresh this menu | refresh=true")

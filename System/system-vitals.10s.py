@@ -38,12 +38,69 @@
 # Renders a rich card on the desktop/Notification Center widget surface too.
 # <vee.surface>both</vee.surface>
 
+import json
 import math
 import os
 import re
 import subprocess
 
-from vee import JSONMenu, Trend
+
+class JSONSection:
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+    def submenu(self, text, **opts):
+        children = []
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}, "submenu": children})
+        return JSONSection(children)
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
+
+class WidgetCard(dict):
+    """The VEE_TARGET=widget stdout payload — https://vee.navbytes.io/guide/widgets/#the-card."""
+
+    def print(self):
+        print(json.dumps(self, ensure_ascii=False))
+
+
+def Trend(**opts):
+    wire_keys = {"refreshAfter": "refresh_after", "staleAfter": "stale_after"}
+    card = WidgetCard(vee_widget=1, template="trend")
+    for k, v in opts.items():
+        if v is not None:
+            card[wire_keys.get(k, k)] = v
+    return card
+
 
 WARN = float(os.environ.get("VITALS_WARN", "70"))
 CRIT = float(os.environ.get("VITALS_CRIT", "90"))
@@ -193,8 +250,8 @@ def proc_rows(section, procs):
             f"{name}  {pct:.1f}%",
             progress=max(0.0, min(pct / 100.0, 1.0)),
             color="gray",
-            accessory_width=80,
-            accessory_height=6,
+            accessoryWidth=80,
+            accessoryHeight=6,
         )
 
 
@@ -210,29 +267,29 @@ d.item(
     f"CPU: {cpu_pct:.0f}%",
     color=color,
     progress=max(0.0, min(cpu_pct / 100.0, 1.0)),
-    accessory_width=120,
-    accessory_height=8,
+    accessoryWidth=120,
+    accessoryHeight=8,
 )
 d.item(
     f"Memory pressure: {mem_pressure_pct:.0f}%",
     color="orange" if mem_pressure_pct >= 70 else "teal",
     progress=max(0.0, min(mem_pressure_pct / 100.0, 1.0)),
-    accessory_width=120,
-    accessory_height=8,
+    accessoryWidth=120,
+    accessoryHeight=8,
 )
 d.item(
     swap_text,
     color="purple",
     progress=swap_frac,
-    accessory_width=120,
-    accessory_height=8,
+    accessoryWidth=120,
+    accessoryHeight=8,
 )
 d.item(
     "CPU history",
     sparkline=history,
-    sparkline_color=color,
-    accessory_width=140,
-    accessory_height=20,
+    sparklineColor=color,
+    accessoryWidth=140,
+    accessoryHeight=20,
 )
 d.item(f"Uptime: {uptime_str}", color="gray")
 d.separator()

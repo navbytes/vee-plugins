@@ -30,11 +30,76 @@
 # Renders a rich card on the desktop/Notification Center widget surface too.
 # <vee.surface>both</vee.surface>
 
+import json
 import os
 import re
 import subprocess
 
-from vee import JSONMenu, Gauge, Stat
+
+class JSONSection:
+    """A dropdown section — see https://vee.navbytes.io/guide/json-output/.
+    This plugin builds the JSON output format directly, no dependency."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+    def submenu(self, text, **opts):
+        children = []
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}, "submenu": children})
+        return JSONSection(children)
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
+
+class WidgetCard(dict):
+    """The VEE_TARGET=widget stdout payload — https://vee.navbytes.io/guide/widgets/#the-card."""
+
+    def print(self):
+        print(json.dumps(self, ensure_ascii=False))
+
+
+def _widget_card(template, **opts):
+    wire_keys = {"refreshAfter": "refresh_after", "staleAfter": "stale_after"}
+    card = WidgetCard(vee_widget=1, template=template)
+    for k, v in opts.items():
+        if v is not None:
+            card[wire_keys.get(k, k)] = v
+    return card
+
+
+def Gauge(**opts):
+    return _widget_card("gauge", **opts)
+
+
+def Stat(**opts):
+    return _widget_card("stat", **opts)
+
 
 TARGET = os.environ.get("VEE_TARGET", "menu")
 
@@ -218,8 +283,8 @@ d.item(
     f"Charge: {pct}%",
     color=color,
     progress=max(0.0, min(pct / 100.0, 1.0)),
-    accessory_width=140,
-    accessory_height=10,
+    accessoryWidth=140,
+    accessoryHeight=10,
 )
 d.item(state_text, color="gray")
 if time_text:
@@ -229,8 +294,8 @@ d.separator()
 d.item("Health", header=True)
 d.item(f"Cycle count: {cycle_count}")
 # Drop the None color the "Condition" row gets when everything is Normal —
-# a stray null color is harmless but noisier than leaving it out (the SDK
-# already omits a None-valued option, so this is just for readability).
+# a stray null color is harmless but noisier than leaving it out (JSONSection
+# .item already omits a None-valued option, so this is just for readability).
 d.item(f"Condition: {condition}", color="orange" if condition not in ("Normal", "n/a") else None)
 
 if max_capacity:
@@ -244,8 +309,8 @@ if max_capacity:
                 "labels": ["Capacity remaining", "Wear"],
                 "colors": ["green", "#3C4046"],
             },
-            accessory_width=60,
-            accessory_height=60,
+            accessoryWidth=60,
+            accessoryHeight=60,
         )
         # Apple Silicon Macs no longer expose raw design-vs-current mAh via
         # system_profiler — Maximum Capacity (%) *is* that ratio today, so

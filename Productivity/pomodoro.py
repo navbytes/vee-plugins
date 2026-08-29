@@ -5,9 +5,9 @@
 # This is Vee's STREAMING plugin showcase: no filename interval, marked
 # <vee.type>streamable</vee.type>, and it stays running forever,
 # pushing a full menu render between `~~~` separators once a second instead
-# of being re-run on a timer. It uses the SDK's text-protocol `Menu` builder
-# (not `JSONMenu`) because a streaming loop reads far more clearly as plain
-# renders, and lets the SDK escape the one literal `|` it prints as `\|`.
+# of being re-run on a timer. It uses the file-local text-protocol `Menu`
+# builder below (not JSON) because a streaming loop reads far more clearly
+# as plain renders, and it escapes the one literal `|` it prints as `\|`.
 #
 # All state (phase, when the phase ends, today's tally) lives in one file
 # under $SWIFTBAR_PLUGIN_CACHE_PATH — every run is normally a fresh process,
@@ -49,7 +49,93 @@ import sys
 import time
 from urllib.parse import quote
 
-from vee import Menu
+
+# --- Minimal text-protocol builder ------------------------------------------
+# Vee's xbar/SwiftBar-compatible text format: `text | key=value key2=value2`.
+# Escaping/quoting rules mirror https://vee.navbytes.io/guide/plugin-authoring/
+# — a literal `|`/`\` in display text is escaped, and a param value
+# containing whitespace, `|`, or `\` is quoted.
+_QUOTE_FORCING = frozenset(
+    "\t\n\v\f\r \u00a0\u1680\u2028\u2029\u202f\u205f\u3000\ufeff|\\"
+) | frozenset(chr(c) for c in range(0x2000, 0x200B))
+
+
+def _escape_text(value):
+    return value.replace("\\", "\\\\").replace("|", "\\|").replace("\n", "\\n")
+
+
+def _quote(value):
+    escaped = _escape_text(value)
+    if any(ch in _QUOTE_FORCING for ch in value) or value[:1] in ('"', "'"):
+        return '"' + escaped.replace('"', '\\"') + '"'
+    return escaped
+
+
+def _fmt(value):
+    return "true" if value is True else "false" if value is False else str(value)
+
+
+def _encode(opts):
+    parts = []
+
+    def push(key, value):
+        if value is not None:
+            parts.append(f"{key}={_quote(_fmt(value))}")
+
+    push("color", opts.get("color"))
+    if opts.get("shell") is not None:
+        push("shell", opts["shell"])
+        for i, p in enumerate(opts.get("params") or []):
+            push(f"param{i + 1}", p)
+    push("sfimage", opts.get("sfimage"))
+    push("sfcolor", opts.get("sf_color"))
+    push("searchable", opts.get("searchable"))
+    progress = opts.get("progress")
+    if progress is not None:
+        push("progress", f"{_fmt(progress['value'])},{_fmt(progress['max'])}")
+    chart = opts.get("chart")
+    if chart is not None:
+        push(chart["kind"], ",".join(_fmt(v) for v in chart["values"]))
+        push("chartlabels", ",".join(chart["labels"]))
+        push("chartcolors", ",".join(chart["colors"]))
+    push("accessoryw", opts.get("accessory_w"))
+    push("accessoryh", opts.get("accessory_h"))
+    return " | " + " ".join(parts) if parts else ""
+
+
+class Section:
+    def __init__(self, lines, depth=0):
+        self._lines = lines
+        self._depth = depth
+
+    def item(self, text, **opts):
+        self._lines.append("-" * (self._depth * 2) + _escape_text(text) + _encode(opts))
+        return self
+
+    def separator(self):
+        self._lines.append("-" * (self._depth * 2) + "---")
+        return self
+
+
+class Menu:
+    def __init__(self):
+        self._titles = []
+        self._body = []
+
+    def title(self, text, **opts):
+        self._titles.append(_escape_text(text) + _encode(opts))
+        return self
+
+    @property
+    def dropdown(self):
+        return Section(self._body)
+
+    def to_string(self):
+        head = "\n".join(self._titles)
+        if self._body:
+            return f"{head}\n---\n" + "\n".join(self._body)
+        return head
+
 
 # ---------------------------------------------------------------------------
 # Setup: preferences (sanitized — a bad value falls back to its default
@@ -221,7 +307,7 @@ def fmt_mmss(secs):
 
 
 def notify(title, body):
-    """vee://notify — see ~/repos/vee/docs/_content/cli-and-urls.md#the-notify-action.
+    """vee://notify — see https://vee.navbytes.io/guide/cli-and-urls/#the-notify-action.
     `plugin=` makes the alert actionable (Re-run/Silence/Open Log) and
     coalesces repeats instead of stacking."""
     plugin_id = os.environ.get("VEE_PLUGIN_ID", "")
@@ -264,7 +350,7 @@ def render(state, now):
 
     fmin, bmin = state["focus_sec"] // 60, state["break_sec"] // 60
     if fmin + bmin > 0:
-        # A literal `|` in display text is escaped by the SDK as `\|`.
+        # A literal `|` in display text is escaped as `\|` by `_escape_text`.
         d.item(f"Today: {fmin}m focus | {bmin}m break",
                chart={"kind": "stackedbar", "values": [fmin, bmin],
                       "labels": ["Focus", "Break"], "colors": ["orange", "green"]},
