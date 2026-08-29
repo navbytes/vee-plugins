@@ -52,7 +52,71 @@ import re
 import subprocess
 import sys
 
-from vee import Board, JSONMenu, Stat
+
+class JSONSection:
+    """A dropdown section — see docs/_content/json-output.md. No SDK: this
+    plugin builds the JSON output format directly."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+    def submenu(self, text, **opts):
+        children = []
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}, "submenu": children})
+        return JSONSection(children)
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
+
+class WidgetCard(dict):
+    """The VEE_TARGET=widget stdout payload — docs/design/widget-surface-contract.md §4."""
+
+    def print(self):
+        print(json.dumps(self, ensure_ascii=False))
+
+
+def _widget_card(template, **opts):
+    wire_keys = {"refreshAfter": "refresh_after", "staleAfter": "stale_after"}
+    card = WidgetCard(vee_widget=1, template=template)
+    for k, v in opts.items():
+        if v is not None:
+            card[wire_keys.get(k, k)] = v
+    return card
+
+
+def Stat(**opts):
+    return _widget_card("stat", **opts)
+
+
+def Board(**opts):
+    return _widget_card("board", **opts)
+
 
 MAX_TARGETS = 12
 CURL_TIMEOUT = 6  # seconds, per-target -- matches the brief's own curl flags
@@ -311,9 +375,9 @@ else:
             submenu.item(
                 f"Last {len(row['times'])} response times",
                 sparkline=row["times"],
-                sparkline_color=STATUS_COLOR[row["status"]],
-                accessory_width=140,
-                accessory_height=20,
+                sparklineColor=STATUS_COLOR[row["status"]],
+                accessoryWidth=140,
+                accessoryHeight=20,
                 tooltip=f"Response time history for {row['label']}, in seconds",
             )
         else:
@@ -339,8 +403,8 @@ else:
             "labels": ["Up", "Degraded", "Down"],
             "colors": ["green", "orange", "red"],
         },
-        accessory_width="full",
-        accessory_height=14,
+        accessoryWidth="full",
+        accessoryHeight=14,
     )
     items.separator()
 

@@ -29,7 +29,97 @@ import subprocess
 import sys
 from datetime import datetime
 
-from vee import Menu
+
+# --- Minimal text-protocol builder (no SDK) ----------------------------------
+# Vee's xbar/SwiftBar-compatible text format: `text | key=value key2=value2`.
+# Escaping/quoting rules mirror docs/_content/plugin-authoring.md — a literal
+# `|`/`\` in display text is escaped, and a param value containing whitespace,
+# `|`, or `\` is quoted.
+_QUOTE_FORCING = frozenset(
+    "\t\n\v\f\r \u00a0\u1680\u2028\u2029\u202f\u205f\u3000\ufeff|\\"
+) | frozenset(chr(c) for c in range(0x2000, 0x200B))
+
+
+def _escape_text(value):
+    return value.replace("\\", "\\\\").replace("|", "\\|").replace("\n", "\\n")
+
+
+def _quote(value):
+    escaped = _escape_text(value)
+    if any(ch in _QUOTE_FORCING for ch in value) or value[:1] in ('"', "'"):
+        return '"' + escaped.replace('"', '\\"') + '"'
+    return escaped
+
+
+def _fmt(value):
+    return "true" if value is True else "false" if value is False else str(value)
+
+
+def _encode(opts):
+    parts = []
+
+    def push(key, value):
+        if value is not None:
+            parts.append(f"{key}={_quote(_fmt(value))}")
+
+    push("color", opts.get("color"))
+    push("size", opts.get("size"))
+    if opts.get("shell") is not None:
+        push("shell", opts["shell"])
+        for i, p in enumerate(opts.get("params") or []):
+            push(f"param{i + 1}", p)
+    push("refresh", opts.get("refresh"))
+    push("disabled", opts.get("disabled"))
+    push("checked", opts.get("checked"))
+    push("sfimage", opts.get("sfimage"))
+    push("sfcolor", opts.get("sf_color"))
+    push("searchable", opts.get("searchable"))
+    slider = opts.get("slider")
+    if slider is not None:
+        push("slider", f"{_fmt(slider['min'])},{_fmt(slider['max'])},{_fmt(slider['value'])}")
+    return " | " + " ".join(parts) if parts else ""
+
+
+class Section:
+    def __init__(self, lines, depth=0):
+        self._lines = lines
+        self._depth = depth
+
+    def item(self, text, **opts):
+        self._lines.append("-" * (self._depth * 2) + _escape_text(text) + _encode(opts))
+        return self
+
+    def separator(self):
+        self._lines.append("-" * (self._depth * 2) + "---")
+        return self
+
+    def submenu(self, text, **opts):
+        self.item(text, **opts)
+        return Section(self._lines, self._depth + 1)
+
+
+class Menu:
+    def __init__(self):
+        self._titles = []
+        self._body = []
+
+    def title(self, text, **opts):
+        self._titles.append(_escape_text(text) + _encode(opts))
+        return self
+
+    @property
+    def dropdown(self):
+        return Section(self._body)
+
+    def to_string(self):
+        head = "\n".join(self._titles)
+        if self._body:
+            return f"{head}\n---\n" + "\n".join(self._body)
+        return head
+
+    def print(self):
+        sys.stdout.write(self.to_string() + "\n")
+
 
 PLUGIN = os.environ.get("VEE_PLUGIN_PATH") or os.environ.get("SWIFTBAR_PLUGIN_PATH") or sys.argv[0]
 BASE_DIR = (

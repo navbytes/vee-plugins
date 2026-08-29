@@ -66,7 +66,47 @@ import json
 import re
 import subprocess
 
-from vee import JSONMenu
+
+class JSONSection:
+    """A dropdown section — see docs/_content/json-output.md. No SDK: this
+    plugin builds the JSON output format directly."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+    def submenu(self, text, **opts):
+        children = []
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}, "submenu": children})
+        return JSONSection(children)
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
 
 VOLUME_RE = re.compile(r"output volume:(\d+)")
 

@@ -54,7 +54,42 @@ import subprocess
 import sys
 import time
 
-from vee import JSONMenu
+
+class JSONSection:
+    """A dropdown section — see docs/_content/json-output.md. No SDK: this
+    plugin builds the JSON output format directly."""
+
+    def __init__(self, items):
+        self._items = items
+
+    def item(self, text, **opts):
+        self._items.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    def separator(self):
+        self._items.append({"separator": True})
+        return self
+
+
+class JSONMenu:
+    def __init__(self):
+        self._titles = []
+        self._items = []
+
+    def title(self, text, **opts):
+        self._titles.append({"text": text, **{k: v for k, v in opts.items() if v is not None}})
+        return self
+
+    @property
+    def dropdown(self):
+        return JSONSection(self._items)
+
+    def print(self):
+        payload = {"vee": 1, "title": self._titles}
+        if self._items:
+            payload["items"] = self._items
+        print(json.dumps(payload, ensure_ascii=False))
+
 
 CACHE_DIR = os.environ.get("SWIFTBAR_PLUGIN_CACHE_PATH") or os.environ.get("TMPDIR", "/tmp")
 try:
@@ -362,8 +397,8 @@ if wifi_details and wifi_details.get("rssi") is not None:
         f"Signal: {wifi_details['rssi']} dBm (noise {wifi_details['noise']} dBm)",
         color=signal_color(progress),
         progress=progress,
-        accessory_width=120,
-        accessory_height=6,
+        accessoryWidth=120,
+        accessoryHeight=6,
         tooltip="RSSI mapped onto -90..-30 dBm",
     )
     items.item(f"Channel: {wifi_details['channel']}")
@@ -453,9 +488,9 @@ if PING_ENABLED:
         items.item(
             "History",
             sparkline=history,
-            sparkline_color=lat_color,
-            accessory_width=140,
-            accessory_height=20,
+            sparklineColor=lat_color,
+            accessoryWidth=140,
+            accessoryHeight=20,
             tooltip=f"Last {len(history)} round-trips to {PING_HOST}",
         )
     elif rtt is None:
