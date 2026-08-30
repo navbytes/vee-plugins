@@ -32,6 +32,19 @@
       "surface": "both"
     },
     {
+      "path": "System/bluetooth.30s.py",
+      "title": "Bluetooth",
+      "category": "System",
+      "summary": "Connected Bluetooth devices, with type icons and battery percentage where macOS reports one.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "e7dfab39f9a0277265c881b49e8bb930f99d9ad838b7311e41bf624b22813f0b",
+      "deprecated": false,
+      "tags": [
+        "system"
+      ]
+    },
+    {
       "path": "System/caffeine.1m.py",
       "title": "Caffeine",
       "category": "System",
@@ -58,6 +71,20 @@
       ]
     },
     {
+      "path": "System/mas-updates.6h.py",
+      "title": "Mac App Store Updates",
+      "category": "System",
+      "summary": "Outdated Mac App Store apps, with per-app and upgrade-all actions via mas-cli.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "ba9ac8ac5033178d94e3c821a9fa77b6324e084311875fe3080763abccc203fa",
+      "deprecated": false,
+      "tags": [
+        "system",
+        "network"
+      ]
+    },
+    {
       "path": "System/system-vitals.10s.py",
       "title": "System Vitals",
       "category": "System",
@@ -73,6 +100,20 @@
       "surface": "both"
     },
     {
+      "path": "Developer/brew-updates.1h.py",
+      "title": "brew-updates.1h.py",
+      "category": "Developer",
+      "summary": "",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "4f935156821d2445eb041769e36a0bddbd758d7d0f44f7eee22e95a22ce3f763",
+      "deprecated": false,
+      "tags": [
+        "developer",
+        "network"
+      ]
+    },
+    {
       "path": "Developer/dev-ports.30s.py",
       "title": "Dev Ports",
       "category": "Developer",
@@ -80,6 +121,19 @@
       "author": "Naveen Kumar",
       "min_macos": "26.0",
       "sha256": "63e21a548ba7e95373533ba04ad0b60902e43b5954e85e1bb03e7fd23162d705",
+      "deprecated": false,
+      "tags": [
+        "developer"
+      ]
+    },
+    {
+      "path": "Developer/docker-status.30s.py",
+      "title": "Docker Status",
+      "category": "Developer",
+      "summary": "Running and stopped Docker containers, with start/stop actions.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "fd8222d3c87012dcce23725ee2775a65bc65680750279200c5e2ff245c6d0c89",
       "deprecated": false,
       "tags": [
         "developer"
@@ -197,6 +251,19 @@
       "author": "Naveen Kumar",
       "min_macos": "26.0",
       "sha256": "931f693ab86e18482e85d97469017833c683356502001e58d74c9777eddf3e3f",
+      "deprecated": false,
+      "tags": [
+        "productivity"
+      ]
+    },
+    {
+      "path": "Productivity/zoom-mute.5s.py",
+      "title": "Zoom Mute",
+      "category": "Productivity",
+      "summary": "Zoom's in-meeting mute status in the menu bar, with a one-click mute/unmute toggle that drives Zoom's own menu via System Events (Automation permission).",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "9f55ba425659b40111a8b99ac32084cabb0450b02f86bd9cdaf4474c89399cc3",
       "deprecated": false,
       "tags": [
         "productivity"
