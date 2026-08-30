@@ -556,7 +556,7 @@ async function fetchCostData(base: string, token: string): Promise<CostData> {
 function notifyBudgetThreshold(data: CostData): void {
   const hit = NOTIFY_THRESHOLDS.filter((t) => data.pct >= t).pop();
   if (!hit) return;
-  const dataDir = process.env.VEE_PLUGIN_DATA_PATH || process.env.SWIFTBAR_PLUGIN_DATA_PATH || process.env.TMPDIR || "/tmp";
+  const dataDir = process.env.SWIFTBAR_PLUGIN_DATA_PATH || process.env.TMPDIR || "/tmp";
   const stateFile = `${dataDir}/litellm-cost-notify-state.json`;
   let state: { date?: string; threshold?: number } = {};
   try {

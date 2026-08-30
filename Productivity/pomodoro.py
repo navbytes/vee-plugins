@@ -38,7 +38,7 @@
 # <vee.type>streamable</vee.type>
 #
 # Trust declarations (advisory, never enforced):
-# <vee.capabilities>notifications</vee.capabilities>
+# <vee.capabilities>notifications,exec,filesystem</vee.capabilities>
 # <vee.exec>open,python3</vee.exec>
 # <vee.filesystem.write>$SWIFTBAR_PLUGIN_CACHE_PATH/pomodoro-state</vee.filesystem.write>
 

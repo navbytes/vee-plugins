@@ -121,7 +121,7 @@
       "summary": "Active interface, Wi-Fi signal, addresses, and latency, with opt-in public IP lookup.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "7e27054ae3d1d6de245c5c872195ee471bd5a6d3f75078dc5e8cd4e8188e1b21",
+      "sha256": "ffe178807746f8c23e7f72fe1116617b6532c1f0e64a2080a336dc401848882d",
       "deprecated": false,
       "tags": [
         "network"
@@ -134,7 +134,7 @@
       "summary": "Daily LLM spend, errors, cache vs budget.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "2c61c27da48c53e5fbc7ffa1deacb7e6c047711d7f8118cff1fa303b1e52358f",
+      "sha256": "b1f5b2ae34ac21b7b175eff090790864428a9d0d4196280c3e891c77dbf79b6f",
       "deprecated": false,
       "tags": [
         "monitoring",
@@ -182,7 +182,7 @@
       "summary": "A streaming menu-bar focus timer \u2014 focus/break phases, a daily tally, and one-click controls.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "aa0c7d50b6319bf3adfb915f5b901d85bdc21b2648ad1c55d63e285d43cff9d4",
+      "sha256": "c602438ef30f9926236b466d190452ad75ea8ce4c8d93ac7a301b71b5af957fc",
       "deprecated": false,
       "tags": [
         "productivity",
