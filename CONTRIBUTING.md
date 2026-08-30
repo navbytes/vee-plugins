@@ -17,17 +17,21 @@ A plugin is accepted when all of these hold:
    lists.
 2. **No dependencies beyond what macOS ships.** bash/zsh, `/usr/bin/*`, and
    `python3`. Wrapping an optional tool (`git`, `docker`, `gh`) is fine — it must
-   detect the tool's absence and say so in a row. There is exactly one exception
-   in the store, `clipboard.swift`, which needs the Xcode Command Line Tools:
-   reading `NSPasteboard`'s change counter and its concealed-type markers is
-   what keeps a clipboard manager from recording your password manager's
-   output, and no shell tool exposes them. A new plugin clears this bar only by
-   showing the dependency buys something a shipped tool genuinely cannot do.
+   detect the tool's absence and say so in a row. There are exactly two
+   exceptions in the store, both because the dependency buys something no
+   shipped tool can: `clipboard.swift` needs the Xcode Command Line Tools,
+   since reading `NSPasteboard`'s change counter and its concealed-type
+   markers — what keeps a clipboard manager from recording your password
+   manager's output — has no shell equivalent; and `litellm-cost.90s.ts` needs
+   Node 24+, since macOS ships no JavaScript runtime. A new plugin clears this
+   bar only by showing the dependency buys something a shipped tool genuinely
+   cannot do.
 3. **It degrades gracefully.** No token, no network, no dependency, no data:
    each one gets a clear, actionable row. A traceback in the menu bar is a bug.
 4. **Its `<vee.*>` declarations are honest.** Every domain, binary, path, and
    secret. Declaring more than you use is fine; declaring less is a rejection.
-5. **It finishes in under ~3 seconds** and never blocks on an unbounded call.
+5. **It finishes comfortably within Vee's execution budget** and never blocks
+   on an unbounded call — no long-running work outside streaming plugins.
    Every `curl` carries `--max-time`.
 6. **Destructive rows are `"searchable": false`** so a typed query plus Return
    can never land on one.
@@ -100,7 +104,8 @@ the plugin. CI fails if the manifest is stale.
 1. Drop it in the right category folder: `System/`, `Developer/`, `Network/`,
    `Monitoring/`, `Productivity/`. The folder name **is** the category Discover
    shows. A new category means adding it to `CATEGORIES` in
-   `scripts/build-catalog.py`.
+   `scripts/build-catalog.py`. `Showcase/` is deliberately capped at the one
+   demo plugin (rule 1) — it is not open for additions.
 2. Name it `name.INTERVAL.ext` — `disk.10m.sh`, `ports.30s.sh`. No interval means
    run-on-demand only.
 3. Fill in the metadata headers. `<vee.desc>` is required — CI rejects a plugin

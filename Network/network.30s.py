@@ -38,7 +38,7 @@
 # <vee.image>https://raw.githubusercontent.com/navbytes/vee-plugins/main/docs/screenshots/network.png</vee.image>
 #
 # <vee.var>boolean(SHOW_PUBLIC_IP=false): Look up your public IP via api.ipify.org. Makes a network call, cached 10 minutes.</vee.var>
-# <vee.var>boolean(PING_ENABLED=true): Track latency to PING_HOST with a sparkline (one ping per refresh).</vee.var>
+# <vee.var>boolean(PING_ENABLED=false): Track latency to PING_HOST with a sparkline (one ping per refresh).</vee.var>
 # <vee.var>string(PING_HOST=1.1.1.1): Host pinged for the latency sparkline.</vee.var>
 #
 # Trust declarations (advisory, never enforced -- see docs/trust-model.md):
@@ -98,7 +98,7 @@ except OSError:
     pass
 
 PING_HOST = (os.environ.get("PING_HOST") or "1.1.1.1").strip() or "1.1.1.1"
-PING_ENABLED = (os.environ.get("PING_ENABLED") or "true").strip().lower() == "true"
+PING_ENABLED = (os.environ.get("PING_ENABLED") or "false").strip().lower() == "true"
 SHOW_PUBLIC_IP = (os.environ.get("SHOW_PUBLIC_IP") or "false").strip().lower() == "true"
 
 PING_CACHE = os.path.join(CACHE_DIR, "network-ping-history.txt")

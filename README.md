@@ -41,7 +41,7 @@ format](https://vee.navbytes.io/guide/json-output/)) directly — `python3
 System/system-vitals.10s.py` or `node Monitoring/litellm-cost.90s.ts` just
 runs, with nothing to install and nothing vendored beside it. A handful of
 plugins with a wider surface area (`caffeine.1m.py`, `pomodoro.py`,
-`litellm-cost.90s.ts`) carry a small, file-local builder for
+`litellm-cost.90s.ts`, `clipboard.swift`) carry a small, file-local builder for
 the quoting/escaping rules the text protocol needs; see
 [`demo/`](demo/) for what building the format by hand looks like on a plugin
 that exercises every option.
@@ -107,7 +107,8 @@ setting first.
    plugin touches is declared. Declaring more than you use is fine; declaring
    less is a bug that gets a plugin rejected.
 3. **No surprise network calls.** Only `github.5m.py` (api.github.com),
-   `network.30s.py` (api.ipify.org, **opt-in**), and `uptime.5m.py` (targets
+   `network.30s.py` (api.ipify.org, **opt-in** public IP lookup; PING_HOST,
+   default `1.1.1.1`, **opt-in** latency ping), and `uptime.5m.py` (targets
    *you* configure) go outbound at all. The clipboard plugin reads everything
    you copy and sends it **nowhere** — it writes to a `0700` directory under
    `~/Library/Caches` and that is the whole of it. There is no telemetry
