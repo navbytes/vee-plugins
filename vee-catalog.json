@@ -199,6 +199,21 @@
       "surface": "both"
     },
     {
+      "path": "Monitoring/openrouter-cost.90s.py",
+      "title": "OpenRouter Cost",
+      "category": "Monitoring",
+      "summary": "OpenRouter AI spend straight from the API: today, week, month, all-time, key limit, with a 14-day sparkline and per-model donut (management key). Falls back to local OpenCode data.",
+      "author": "Naveen Kumar",
+      "min_macos": "26.0",
+      "sha256": "95c1f83d31ccc22d10d36a3ad600d7ff41675b76dfb2ebf922d55b755162e344",
+      "deprecated": false,
+      "tags": [
+        "monitoring",
+        "network",
+        "secrets"
+      ]
+    },
+    {
       "path": "Monitoring/uptime.5m.py",
       "title": "Uptime",
       "category": "Monitoring",
