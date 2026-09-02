@@ -13,7 +13,7 @@
 # A `slider`/`toggle` row's `shell`+`params` command is re-invoked when the
 # control changes, with the new value available two ways: the
 # `VEE_CONTROL_VALUE` env var, and appended as the command's FINAL argv
-# element (see <vee.docs>plugin-authoring.md#interactive-controls). Handing
+# element (see vee.docs plugin-authoring.md#interactive-controls). Handing
 # `shell` straight to `/usr/bin/osascript` cannot use that appended value —
 # `-e "set volume output volume "` has nowhere for a trailing argv element to
 # land inside the AppleScript source string (see the "Interactive controls"

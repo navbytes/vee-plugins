@@ -10,7 +10,7 @@
       "summary": "Output device, volume, and mute, with a live slider and toggle right in the menu.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "db7598849dca1faa702dffc73f62b55441f46ddd23eb2695003e8d57de0989a9",
+      "sha256": "846136a672437f010ad35391eddcae01ef073200ce03adc7c78ab464bab12888",
       "deprecated": false,
       "tags": [
         "system"
@@ -101,12 +101,12 @@
     },
     {
       "path": "Developer/brew-updates.1h.py",
-      "title": "brew-updates.1h.py",
+      "title": "Brew Updates",
       "category": "Developer",
-      "summary": "",
+      "summary": "Outdated Homebrew formulas and casks, with one-click upgrades.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "4f935156821d2445eb041769e36a0bddbd758d7d0f44f7eee22e95a22ce3f763",
+      "sha256": "bd3fd9b2459941074e1682dca8cbe0c4915f21318ed14237bc5f8d501233c788",
       "deprecated": false,
       "tags": [
         "developer",
@@ -202,10 +202,10 @@
       "path": "Monitoring/openrouter-cost.90s.py",
       "title": "OpenRouter Cost",
       "category": "Monitoring",
-      "summary": "OpenRouter AI spend straight from the API: today, week, month, all-time, key limit, with a 14-day sparkline and per-model donut (management key). Falls back to local OpenCode data.",
+      "summary": "OpenRouter spend in the menu bar: account-wide today, credits gauge, 14-day sparkline, per-model donut and mix with a management key \u2014 or per-key numbers with a self-built 7-day sparkline on a regular key.",
       "author": "Naveen Kumar",
       "min_macos": "26.0",
-      "sha256": "95c1f83d31ccc22d10d36a3ad600d7ff41675b76dfb2ebf922d55b755162e344",
+      "sha256": "e31c6faa4a05e18fcd5ee83dc676a7d0057d841d2f7f2fee2ff424bc6c89773c",
       "deprecated": false,
       "tags": [
         "monitoring",

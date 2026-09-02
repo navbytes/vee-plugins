@@ -19,7 +19,7 @@
 #
 # The upstream plugin also had an in-menu "Settings" submenu with toggle
 # rows that RPC'd back into the script to persist config — Vee has no
-# equivalent RPC mechanism, so those became typed <vee.var> preferences
+# equivalent RPC mechanism, so those became typed vee.var preferences
 # instead (Vee builds the form). Same for its "Upgrade All: Exclude" toggle
 # per package: it's now the UPGRADE_ALL_EXCLUDE preference. The upstream
 # "Post-Run: Doctor" toggle is dropped — `brew doctor`'s output isn't shown
