@@ -1,15 +1,49 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  check:
+  changes:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      relevant: ${{ steps.paths.outputs.relevant }}
     steps:
-      - uses: actions/checkout@v4
+      - id: paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            echo 'relevant=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename' > paths.txt
+          if grep -Ev '^(docs/|README[^/]*\.md$|CHANGELOG[^/]*\.md$|LICENSE[^/]*$|\.github/AUTOMATION\.md$)' paths.txt | grep -q .; then
+            echo 'relevant=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'relevant=false' >> "$GITHUB_OUTPUT"
+          fi
+
+  check:
+    if: ((github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false)) && needs.changes.outputs.relevant == 'true'
+    needs: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Manifest is in sync with the repo
         run: python3 scripts/build-catalog.py --check
@@ -47,7 +81,7 @@ jobs:
           fi
           echo "no SDK imports"
 
-      - uses: ludeeus/action-shellcheck@master
+      - uses: ludeeus/action-shellcheck@00b27aa7cb85167568cb48a3838b75f4265f2bca # master
         with:
           severity: warning
           format: gcc
